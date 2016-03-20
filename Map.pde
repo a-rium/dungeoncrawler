@@ -1,5 +1,6 @@
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 class Map
 {
@@ -11,28 +12,29 @@ class Map
 	{
 		rows = cols = depth = 10;
 		
-		map3d = new ArrayList<>(depth);
+		map3d = new ArrayList<Table>(depth);
 		for(int d = 0; d<depth; d++)		//creazione di una mappa 3d vuota di dimensioni 10x10x10
 		{
-			for(int j = 0; i<cols; j++)
+			map3d.add(new Table());
+			for(int j = 0; j<cols; j++)
 				map3d.get(d).addColumn();
 			for(int i = 0; i<rows; i++)
 			{
-				map3d.get(d).addRows();
+				map3d.get(d).addRow();
 				for(int j = 0; j<cols; j++)
 					map3d.get(d).setInt(0, i, j);
 			}
 		}
 		
-		cubes = new ArrayList<>(depth);
+		cubes = new ArrayList<ArrayList<ArrayList<Cube>>>(depth);
 		for(int d = 0; d<depth; d++)
 		{
-			cubes.get(d) = new ArrayList<>(rows);
+			cubes.add(new ArrayList<ArrayList<Cube>>(rows));
 			for(int i = 0; i<rows; i++)
 			{
-				cubes.get(d).get(i) = new ArrayList<>(cols);
+				cubes.get(d).add(new ArrayList<Cube>(cols));
 				for(int j = 0; j<cols; j++)
-					cubes.get(d).get(i).get(j) = new Cube(map3d.get(d).getInt(i, j), dimCubo);
+					cubes.get(d).get(i).add(new Cube(map3d.get(d).getInt(i, j), dimCubo));
 			}
 		}
 	}
@@ -44,21 +46,19 @@ class Map
 		cols = info.getInt(0, 1);
 		depth = info.getInt(0, 2);
 		
-		map3d = new ArrayList<>(depth);
+		map3d = new ArrayList<Table>(depth);
 		for(int d = 0; d<depth; d++)
-		{
-			map3d.get(d) = loadTable(path.substring(0, path.indexOf(".")) + "_" + d + ".csv");
-		}
+			map3d.add(loadTable(path.substring(0, path.indexOf(".")) + "_" + d + ".csv"));
 		
-		cubes = new ArrayList<>(depth);
+		cubes = new ArrayList<ArrayList<ArrayList<Cube>>>(depth);
 		for(int d = 0; d<depth; d++)
 		{
-			cubes.get(d) = new ArrayList<>(rows);
+			cubes.add(new ArrayList<ArrayList<Cube>>(rows));
 			for(int i = 0; i<rows; i++)
 			{
-				cubes.get(d).get(i) = new ArrayList<>(cols);
+				cubes.get(d).add(new ArrayList<Cube>(cols));
 				for(int j = 0; j<cols; j++)
-					cubes.get(d).get(i).get(j) = new Cube(map3d.get(d).getInt(i, j), dimCubo);
+					cubes.get(d).get(i).add(new Cube(map3d.get(d).getInt(i, j), dimCubo));
 			}
 		}
 	}
@@ -82,12 +82,12 @@ class Map
 	public void setCube(int x, int y, int z, int type)
 	{
 		if(x >= cols || y >= rows || z >= depth)
-			multidimensionalResize();
+			multidimensionalResize(x, y, z);
 		cubes.get(z).get(y).get(x).changeType(type);
-		map3d.get(z).setInt(type, i, j);
+		map3d.get(z).setInt(type, y, x);
 	}
 	
-	private void multidimensionalResize()
+	private void multidimensionalResize(int x, int y, int z)
 	{
 		if(cols <= x)
 		{
@@ -110,11 +110,11 @@ class Map
 				for(int i = rows; i<y; i++)
 				{
 					map3d.get(d).addRow();
-					cubes.get(d).add(new ArrayList<>(cols));
+					cubes.get(d).add(new ArrayList<Cube>(cols));
 					for(int j = 0; j<cols; j++)
 					{
 						map3d.get(d).setInt(0, i, j);
-						cubes.get(d).get(i).get(j) = new Cube(0, dimCubo);
+						cubes.get(d).get(i).add(new Cube(0, dimCubo));
 					}
 				}
 			rows = y+1;
@@ -124,15 +124,18 @@ class Map
 		{
 			for(int d = depth; d<z; d++)
 			{
-				map3d.add(new Table(rows, cols));
-				cubes.add(new ArrayList<>(rows));
+				map3d.add(new Table());
+				cubes.add(new ArrayList<ArrayList<Cube>>(rows));
+				for(int j = 0; j<cols; j++)
+					map3d.get(d).addColumn();
 				for(int i = 0; i<rows; i++)
 				{
-					cubes.get(d).get(i) = new ArrayList<>(cols);
+					map3d.get(d).addRow();
+					cubes.get(d).add(new ArrayList<Cube>(cols));
 					for(int j = 0; j<cols; j++)
 					{
-						map3d.get(d).set(0, i, j);
-						cubes.get(d).get(i).get(j) = new Cube(0, dimCubo);
+						map3d.get(d).setInt(0, i, j);
+						cubes.get(d).get(i).add(new Cube(0, dimCubo));
 					}
 				}
 				depth++;

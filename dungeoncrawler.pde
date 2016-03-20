@@ -32,7 +32,7 @@ void setup()
 	cubo = new Cube(0, dimCubo);
 	map = new Map("src/map.csv");
 	textSize(20);
-	fill(0);
+	
 	noStroke();
 }
 
@@ -51,6 +51,7 @@ void draw()
 	noStroke();
 	map.drawGridLike();
 	popMatrix();
+	pushMatrix();
 	hint(DISABLE_DEPTH_TEST);	//passaggio a grafica 2d per l'hud
 	camera();
 	text("Facing: " + (orientationX == eyeX + dimCubo
@@ -60,8 +61,10 @@ void draw()
 	text("X : " + floor(eyeX / dimCubo) +
 		 "\nY : " + floor(eyeY / dimCubo) +
 		 "\nZ : " + floor(eyeZ / dimCubo), 0, 45);
+	if(buildMode)
+		text("EDITING", 0, 105);
 	hint(ENABLE_DEPTH_TEST);
-	
+	popMatrix();
 }
 
 void mouseDragged()
@@ -103,9 +106,9 @@ void keyTyped()
 					? "LEFT" : (orientationZ == eyeZ + dimCubo 
 					? "BACK" : "FORWARD")))); break;
 		case '\\': switchMode(); break;
+		case ' ': break;
 		case CODED : switch(keyCode)
 					{
-						case SPACE : 
 					}
 	}
 }
@@ -113,8 +116,8 @@ void keyTyped()
 void switchMode()
 {
 	if(!buildMode)
-	{
-		
-	}
+		map = new Map();
+	// else
+		// map.saveMap();
 	buildMode = !buildMode;
 }
