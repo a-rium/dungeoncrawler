@@ -18,10 +18,10 @@ class Cube
 		shape(solid);
 	}
 
-	public void draw(int tX, int tY)
+	public void draw(int tX, int tY, int tZ)
 	{
 		pushMatrix();
-		translate(tX, tY);
+		translate(tX, tY, tZ);
 		shape(solid);
 		popMatrix();
 	}
