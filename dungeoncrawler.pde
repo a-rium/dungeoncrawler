@@ -92,6 +92,8 @@ void keyTyped()
 		case 's' : moveBack(); break; //eyeZ += dimCubo; orientationZ += dimCubo; break;
 		case 'a' : turnLeft();  break;
 		case 'd' : turnRight(); break;
+		case 'z' : moveLeft(); break; //eyeX -= dimCubo; orientationX -= dimCubo; break;
+		case 'c' : moveRight(); break; //eyeX += dimCubo; orientationX += dimCubo; break;
 		case 'o' : eyeY -= dimCubo; orientationY -= dimCubo; break;
 		case 'l' : eyeY += dimCubo; orientationY += dimCubo; break;
 		// Guarda avanti
@@ -154,6 +156,22 @@ void moveBack()
 		eyeX += orientationX < eyeX ? dimCubo : -dimCubo;
 		orientationX = eyeX + (aux < eyeX ? -dimCubo : dimCubo);
 	}
+}
+
+void moveLeft()
+{
+	if(orientationX == eyeX)
+		eyeX += orientationZ < eyeZ ? -dimCubo : dimCubo;
+	else
+		eyeZ += orientationX < eyeX ? dimCubo : -dimCubo;
+}
+
+void moveRight()
+{
+	if(orientationX == eyeX)
+		eyeX += -(orientationZ < eyeZ ? -dimCubo : dimCubo);
+	else
+		eyeZ += -(orientationX < eyeX ? dimCubo : -dimCubo);
 }
 
 void turnLeft()
