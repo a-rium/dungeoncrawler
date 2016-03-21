@@ -6,6 +6,8 @@ float orientationX;
 float orientationY;
 float orientationZ;
 
+boolean phase = false;
+
 boolean buildMode = false;
 
 float eyeX, eyeY, eyeZ;
@@ -86,10 +88,10 @@ void keyTyped()
 {
 	switch(key)
 	{
-		case 'w' : eyeZ -= dimCubo; orientationZ -= dimCubo; break;
-		case 's' : eyeZ += dimCubo; orientationZ += dimCubo; break;
-		case 'a' : eyeX -= dimCubo; orientationX -= dimCubo; break;
-		case 'd' : eyeX += dimCubo; orientationX += dimCubo; break;
+		case 'w' : moveForward(); break;//eyeZ -= dimCubo; orientationZ -= dimCubo; break;
+		case 's' : moveBack(); break; //eyeZ += dimCubo; orientationZ += dimCubo; break;
+		case 'a' : turnLeft();  break;
+		case 'd' : turnRight(); break;
 		case 'o' : eyeY -= dimCubo; orientationY -= dimCubo; break;
 		case 'l' : eyeY += dimCubo; orientationY += dimCubo; break;
 		// Guarda avanti
@@ -119,6 +121,66 @@ void keyTyped()
 		case CODED : switch(keyCode)
 					{
 					}
+	}
+}
+
+void moveForward()
+{
+	if(orientationX == eyeX)
+	{
+		float aux = eyeZ;
+		eyeZ += orientationZ > eyeZ ? dimCubo : -dimCubo;
+		orientationZ = eyeZ + (aux > eyeZ ? - dimCubo : dimCubo);
+	}
+	else
+	{
+		float aux = eyeX;
+		eyeX += orientationX > eyeX ? dimCubo : -dimCubo;
+		orientationX = eyeX + (aux > eyeX ? -dimCubo : dimCubo);
+	}
+}
+
+void moveBack()
+{
+	if(orientationX == eyeX)
+	{
+		float aux = eyeZ;
+		eyeZ += orientationZ < eyeZ ? dimCubo : -dimCubo;
+		orientationZ = eyeZ + (aux < eyeZ ? -dimCubo : dimCubo);
+	}
+	else
+	{
+		float aux = eyeX;
+		eyeX += orientationX < eyeX ? dimCubo : -dimCubo;
+		orientationX = eyeX + (aux < eyeX ? -dimCubo : dimCubo);
+	}
+}
+
+void turnLeft()
+{
+	if(orientationX != eyeX)
+	{
+		orientationZ = orientationX > eyeX ? eyeZ - dimCubo : eyeZ + dimCubo;
+		orientationX = eyeX;
+	}
+	else
+	{
+		orientationX = orientationZ > eyeZ ? eyeX + dimCubo : eyeX - dimCubo;
+		orientationZ = eyeZ; 
+	}
+}
+
+void turnRight()
+{
+	if(orientationX != eyeX)
+	{
+		orientationZ = orientationX > eyeX ? eyeZ + dimCubo : eyeZ - dimCubo;
+		orientationX = eyeX;
+	}
+	else
+	{
+		orientationX = orientationZ > eyeZ ? eyeX - dimCubo : eyeX + dimCubo;
+		orientationZ = eyeZ; 
 	}
 }
 
