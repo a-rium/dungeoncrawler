@@ -88,13 +88,21 @@ void keyTyped()
 {
 	switch(key)
 	{
+		// Movimento in avanti
 		case 'w' : moveForward(); break;//eyeZ -= dimCubo; orientationZ -= dimCubo; break;
+		// Movimento indietro
 		case 's' : moveBack(); break; //eyeZ += dimCubo; orientationZ += dimCubo; break;
+		// Rotazione della telecamera verso sinistra
 		case 'a' : turnLeft();  break;
+		// Rotazione della telecamera verso destra
 		case 'd' : turnRight(); break;
+		// Movimento a sinistra
 		case 'z' : moveLeft(); break; //eyeX -= dimCubo; orientationX -= dimCubo; break;
+		// Movimento a destra
 		case 'c' : moveRight(); break; //eyeX += dimCubo; orientationX += dimCubo; break;
+		// Movimento in alto
 		case 'o' : eyeY -= dimCubo; orientationY -= dimCubo; break;
+		// Movimento in basso
 		case 'l' : eyeY += dimCubo; orientationY += dimCubo; break;
 		// Guarda avanti
 		case 'u' : orientationY = eyeY; orientationX = eyeX; orientationZ = eyeZ - dimCubo; break;
@@ -104,25 +112,46 @@ void keyTyped()
 		case 'h' : orientationY = eyeY; orientationX = eyeX - dimCubo; orientationZ = eyeZ; break;
 		// Guarda a destra
 		case 'k' : orientationY = eyeY; orientationX = eyeX + dimCubo; orientationZ = eyeZ; break;
-		// Guarda in alto
+		// Guarda in alto (non funzionante)
 		case 't' : orientationY = eyeY - dimCubo; orientationX = eyeX; orientationZ = eyeZ; break;
-		// Guarda in basso
+		// Guarda in basso (non funzionante)
 		case 'g' : orientationY = eyeY + dimCubo; orientationX = eyeX; orientationZ = eyeZ; break;
-		case 'r' : eyeX = width / 2.0; eyeY = height / 2.0; eyeZ = (height / 2) / tan(PI / 6); break;
+		// Riporta la telecamera alla posizione e allo stato originario
+		case 'r' : eyeX = width / 2.0; eyeY = height / 2.0; eyeZ = (height / 2) / tan(PI / 6); 
+				   orientationX = eyeX; orientationY = eyeY; orientationZ = eyeZ + dimCubo; break;
+		// Stampa informazioni di debug
 		case 'p' : println("Facing: " + (orientationX == eyeX + dimCubo
 					? "RIGHT" : (orientationX == eyeX - dimCubo
 					? "LEFT" : (orientationZ == eyeZ + dimCubo 
 					? "BACK" : "FORWARD")))); break;
+		// Passa dalla modalita di esplorazione a quella di editing, e viceversa.
+		// Salva la mappa editata
 		case '\\': switchMode(); break;
+		// Posiziona un blocco  davanti se si e' in modalita di editing
 		case ' ': 
 					if(buildMode)
 						map.setCube(floor(orientationX / dimCubo), 
 									floor(orientationY / dimCubo), 
 									floor(orientationZ / dimCubo), 1);
 					break;
-		case CODED : switch(keyCode)
-					{
-					}
+		case '<': 
+			if(buildMode)
+				map.setCube(floor(orientationX / dimCubo), 
+							floor(orientationY / dimCubo), 
+							floor(orientationZ / dimCubo), 0);
+			break;
+		default: break;
+	}
+	switch(keyCode)
+	{
+		// Cancella il blocco davanti alla telecamera se si e' in modalita editing
+		case BACKSPACE: 
+			if(buildMode)
+				map.setCube(floor(orientationX / dimCubo), 
+							floor(orientationY / dimCubo), 
+							floor(orientationZ / dimCubo), 0);
+			break;
+		default: break;
 	}
 }
 
@@ -161,17 +190,29 @@ void moveBack()
 void moveLeft()
 {
 	if(orientationX == eyeX)
+	{
 		eyeX += orientationZ < eyeZ ? -dimCubo : dimCubo;
+		orientationX = eyeX;
+	}
 	else
+	{
 		eyeZ += orientationX < eyeX ? dimCubo : -dimCubo;
+		orientationZ = eyeZ;
+	}
 }
 
 void moveRight()
 {
 	if(orientationX == eyeX)
+	{
 		eyeX += -(orientationZ < eyeZ ? -dimCubo : dimCubo);
+		orientationX = eyeX;
+	}
 	else
+	{
 		eyeZ += -(orientationX < eyeX ? dimCubo : -dimCubo);
+		orientationZ = eyeZ;
+	}
 }
 
 void turnLeft()
