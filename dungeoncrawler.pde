@@ -21,11 +21,12 @@ Map map;
 void setup()
 {
 	size(1200, 700, P3D);
-	orientationX = width / 2.0 + dimCubo / 2;
-	orientationY = height / 2.0 + dimCubo / 2;
-	eyeX = width / 2.0 + dimCubo / 2;
-	eyeY = height / 2.0 + dimCubo / 2;
+	
+	eyeX = dimCubo / 2;
+	eyeY = dimCubo / 2;
 	eyeZ = (height / 2) / tan(PI / 6)  + dimCubo * 3 / 2;
+	orientationX = eyeX;
+	orientationY = eyeY;
 	orientationZ = eyeZ - dimCubo;
 	wood = loadImage("src/wood.jpg");
 	stone = loadImage("src/stone.jpg");
@@ -46,7 +47,7 @@ void draw()
 	//text("Hello", 0, 20, 0);//eyeX - dimCubo / 2, eyeY - dimCubo / 2 + 20, 0);
 	background(180);
 	pushMatrix();
-	translate(width/2, height/2);
+	// translate(width/2, height/2);
 	// rotateY(grades+=0.01);
 	noStroke();
 	map.drawGridLike();
@@ -60,9 +61,12 @@ void draw()
 					? "BACK" : "FORWARD"))), 0, 20);
 	text("X : " + floor(eyeX / dimCubo) +
 		 "\nY : " + floor(eyeY / dimCubo) +
-		 "\nZ : " + floor(eyeZ / dimCubo), 0, 45);
+		 "\nZ : " + floor(eyeZ / dimCubo) + 
+		 "\nPointing to : \nX : " + floor(orientationX / dimCubo) +
+		 "\nY : " + floor(orientationY / dimCubo) +
+		 "\nZ : " + floor(orientationZ / dimCubo), 0, 45);
 	if(buildMode)
-		text("EDITING", 0, 105);
+		text("EDITING", 0, 200);
 	hint(ENABLE_DEPTH_TEST);
 	popMatrix();
 }
@@ -106,7 +110,12 @@ void keyTyped()
 					? "LEFT" : (orientationZ == eyeZ + dimCubo 
 					? "BACK" : "FORWARD")))); break;
 		case '\\': switchMode(); break;
-		case ' ': break;
+		case ' ': 
+					if(buildMode)
+						map.setCube(floor(orientationX / dimCubo), 
+									floor(orientationY / dimCubo), 
+									floor(orientationZ / dimCubo), 1);
+					break;
 		case CODED : switch(keyCode)
 					{
 					}
@@ -115,9 +124,7 @@ void keyTyped()
 
 void switchMode()
 {
-	if(!buildMode)
-		map = new Map();
-	// else
-		// map.saveMap();
+	if(buildMode)
+		map.saveMap("src/savedMap.csv");
 	buildMode = !buildMode;
 }

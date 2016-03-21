@@ -20,10 +20,13 @@ class Cube
 
 	public void draw(int tX, int tY, int tZ)
 	{
-		pushMatrix();
-		translate(tX, tY, tZ);
-		shape(solid);
-		popMatrix();
+		if(type > 0)
+		{
+			pushMatrix();
+			translate(tX, tY, tZ);
+			shape(solid);
+			popMatrix();
+		}
 	}
 
 	public int getSize()
@@ -46,8 +49,8 @@ class Cube
 	{
 		switch(type)
 		{
-			case 0 : solid.setTexture(wood); break;
-			case 1 : solid.setTexture(stone); break;
+			case 1 : solid.setTexture(wood); break;
+			case 2 : solid.setTexture(stone); break;
 		}
 	}
 }

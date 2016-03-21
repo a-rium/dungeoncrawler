@@ -22,7 +22,7 @@ class Map
 			{
 				map3d.get(d).addRow();
 				for(int j = 0; j<cols; j++)
-					map3d.get(d).setInt(0, i, j);
+					map3d.get(d).setInt(i, j, 0);
 			}
 		}
 		
@@ -81,10 +81,17 @@ class Map
 	
 	public void setCube(int x, int y, int z, int type)
 	{
+		if(x < 0 || y < 0 || z < 0)
+			return;
+		// assert(false) : "X : " + x + " Y : " + y + " Z : " +z; 
 		if(x >= cols || y >= rows || z >= depth)
+		{
+			
 			multidimensionalResize(x, y, z);
+		}
+		// assert(false) : "Errore: d = " + depth + " r = " + rows + " c = " +  cols;
 		cubes.get(z).get(y).get(x).changeType(type);
-		map3d.get(z).setInt(type, y, x);
+		map3d.get(z).setInt(y, x, type);
 	}
 	
 	private void multidimensionalResize(int x, int y, int z)
@@ -92,12 +99,12 @@ class Map
 		if(cols <= x)
 		{
 			for(int d = 0; d<depth; d++)
-				for(int j = cols; j<x; j++)
+				for(int j = cols; j<=x; j++)
 				{
 					map3d.get(d).addColumn();
 					for(int i = 0; i<rows; i++)
 					{
-						map3d.get(d).setInt(0, i, j);
+						map3d.get(d).setInt(i, j, 0);
 						cubes.get(d).get(i).add(new Cube(0, dimCubo));
 					}
 				}
@@ -107,13 +114,13 @@ class Map
 		if(rows <= y)
 		{
 			for(int d = 0; d<depth; d++)
-				for(int i = rows; i<y; i++)
+				for(int i = rows; i<=y; i++)
 				{
 					map3d.get(d).addRow();
 					cubes.get(d).add(new ArrayList<Cube>(cols));
 					for(int j = 0; j<cols; j++)
 					{
-						map3d.get(d).setInt(0, i, j);
+						map3d.get(d).setInt(i, j, 0);
 						cubes.get(d).get(i).add(new Cube(0, dimCubo));
 					}
 				}
@@ -122,7 +129,7 @@ class Map
 		
 		if(depth <= z)
 		{
-			for(int d = depth; d<z; d++)
+			for(int d = depth; d<=z; d++)
 			{
 				map3d.add(new Table());
 				cubes.add(new ArrayList<ArrayList<Cube>>(rows));
@@ -134,12 +141,34 @@ class Map
 					cubes.get(d).add(new ArrayList<Cube>(cols));
 					for(int j = 0; j<cols; j++)
 					{
-						map3d.get(d).setInt(0, i, j);
+						map3d.get(d).setInt(i, j, 0);
 						cubes.get(d).get(i).add(new Cube(0, dimCubo));
 					}
 				}
 				depth++;
 			}
+		}
+		
+	}
+	public void saveMap(String path)
+	{
+		PrintWriter out = createWriter(path);
+		out.print("" + cols + "," + rows + "," + depth);
+		out.close();
+		for(int d = 0; d<depth; d++)
+		{
+			out = createWriter(path.substring(0, path.indexOf(".")) + "_" + d + ".csv");
+			for(int i = 0; i<rows; i++)
+			{
+				for(int j = 0; j<cols; j++)
+				{
+					out.print("" + map3d.get(d).getInt(i, j));
+					if(j != cols - 1)
+						out.print(",");
+				}
+				out.println();
+			}
+			out.close();
 		}
 	}
 }
