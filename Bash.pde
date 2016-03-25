@@ -61,6 +61,13 @@ class Bash
 			teleport(x, y, z);
 			map.redoCubes();
 		}
+		else if(cmd[0].equals("delimiter") && cmd.length == 2)
+		{
+			if(cmd[1].equals("on"))
+				delimiter = true;
+			else if(cmd[1].equals("off"))
+				delimiter = false;
+		}
 	}
 	
 	public String getPreviousCommand()

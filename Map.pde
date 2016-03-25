@@ -86,6 +86,35 @@ class Map
 		}
 	}
 	
+	public void drawDelimiter()
+	{
+		pushMatrix();
+		noFill();
+		
+		stroke(10);
+		
+		translate(width * dimCubo / 2, height * dimCubo / 2, depth * dimCubo / 2);
+		box(width * dimCubo, height * dimCubo, depth * dimCubo);
+		/*
+		
+		beginShape();
+		vertex(0, 0, 0);
+		vertex(width * dimCubo, 0, 0);
+		vertex(0, height * dimCubo, 0);
+		vertex(width * dimCubo, height * dimCubo, 0);
+		
+		vertex(0, 0, depth * dimCubo);
+		vertex(width * dimCubo, 0, depth * dimCubo);
+		vertex(0, height * dimCubo, depth * dimCubo);
+		vertex(width * dimCubo, height * dimCubo, depth * dimCubo);
+		
+		
+		
+		endShape();
+		*/
+		popMatrix();
+	}
+	
 	public void setCube(int x, int y, int z, int type)
 	{
 		if(x < 0 || y < 0 || z < 0)

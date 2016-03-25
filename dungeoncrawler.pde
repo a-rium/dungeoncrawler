@@ -7,6 +7,7 @@ float orientationZ;
 boolean phase = false;
 
 boolean buildMode = false;
+boolean delimiter = false;
 
 float eyeX, eyeY, eyeZ;
 
@@ -45,6 +46,7 @@ void draw()
 		   orientationX, orientationY,
            orientationZ, 0, 1, 0);
 	background(180);
+	if(delimiter) map.drawDelimiter();
 	pushMatrix();
 	noStroke();
 	map.drawGridLike();
