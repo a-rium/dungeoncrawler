@@ -8,9 +8,11 @@ class Map
 	private ArrayList<Table> map3d;
 	private ArrayList<ArrayList<ArrayList<Cube>>> cubes;
 
-	public Map()
+	public Map(int rows, int cols, int depths)
 	{
-		rows = cols = depth = 10;
+		this.rows = rows;
+		this.cols = cols;
+		this.depth = depth;
 		
 		map3d = new ArrayList<Table>(depth);
 		for(int d = 0; d<depth; d++)		//creazione di una mappa 3d vuota di dimensioni 10x10x10
@@ -169,6 +171,20 @@ class Map
 				out.println();
 			}
 			out.close();
+		}
+	}
+	public void redoCubes()
+	{
+		cubes = new ArrayList<ArrayList<ArrayList<Cube>>>(depth);
+		for(int d = 0; d<depth; d++)
+		{
+			cubes.add(new ArrayList<ArrayList<Cube>>(rows));
+			for(int i = 0; i<rows; i++)
+			{
+				cubes.get(d).add(new ArrayList<Cube>(cols));
+				for(int j = 0; j<cols; j++)
+					cubes.get(d).get(i).add(new Cube(map3d.get(d).getInt(i, j), dimCubo));
+			}
 		}
 	}
 }
