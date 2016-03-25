@@ -1,42 +1,47 @@
 
+// depth -> depth
+// cols -> width
+// rows -> height
+
+
 import java.util.ArrayList;
 import java.util.Arrays;
 
 class Map
 {
-	private int rows, cols, depth;
+	private int width, height, depth;
 	private ArrayList<Table> map3d;
 	private ArrayList<ArrayList<ArrayList<Cube>>> cubes;
 
-	public Map(int rows, int cols, int depths)
+	public Map(int width, int height, int depths)
 	{
-		this.rows = rows;
-		this.cols = cols;
+		this.width = width;
+		this.height = height;
 		this.depth = depth;
 		
-		map3d = new ArrayList<Table>(depth);
-		for(int d = 0; d<depth; d++)		//creazione di una mappa 3d vuota di dimensioni 10x10x10
+		map3d = new ArrayList<Table>(height);
+		for(int h = 0; h<height; h++)		//creazione di una mappa 3d vuota di dimensioni 10x10x10
 		{
 			map3d.add(new Table());
-			for(int j = 0; j<cols; j++)
-				map3d.get(d).addColumn();
-			for(int i = 0; i<rows; i++)
+			for(int w = 0; w<width; w++)
+				map3d.get(h).addColumn();
+			for(int d = 0; d<depth; d++)
 			{
-				map3d.get(d).addRow();
-				for(int j = 0; j<cols; j++)
-					map3d.get(d).setInt(i, j, 0);
+				map3d.get(h).addRow();
+				for(int w = 0; w<width; w++)
+					map3d.get(h).setInt(d, w, 0);
 			}
 		}
 		
-		cubes = new ArrayList<ArrayList<ArrayList<Cube>>>(depth);
-		for(int d = 0; d<depth; d++)
+		cubes = new ArrayList<ArrayList<ArrayList<Cube>>>(height);
+		for(int h = 0; h<height; h++)
 		{
-			cubes.add(new ArrayList<ArrayList<Cube>>(rows));
-			for(int i = 0; i<rows; i++)
+			cubes.add(new ArrayList<ArrayList<Cube>>(depth));
+			for(int d = 0; d<depth; d++)
 			{
-				cubes.get(d).add(new ArrayList<Cube>(cols));
-				for(int j = 0; j<cols; j++)
-					cubes.get(d).get(i).add(new Cube(map3d.get(d).getInt(i, j), dimCubo));
+				cubes.get(h).add(new ArrayList<Cube>(width));
+				for(int w = 0; w<width; w++)
+					cubes.get(h).get(d).add(new Cube(map3d.get(h).getInt(d, w), dimCubo));
 			}
 		}
 	}
@@ -44,40 +49,40 @@ class Map
 	public Map(String path)
 	{
 		Table info = loadTable(path);
-		rows = info.getInt(0, 0);
-		cols = info.getInt(0, 1);
+		width = info.getInt(0, 0);
+		height = info.getInt(0, 1);
 		depth = info.getInt(0, 2);
 		
-		map3d = new ArrayList<Table>(depth);
-		for(int d = 0; d<depth; d++)
-			map3d.add(loadTable(path.substring(0, path.indexOf(".")) + "_" + d + ".csv"));
+		map3d = new ArrayList<Table>(height);
+		for(int h = height - 1; h>=0; h--)
+			map3d.add(loadTable(path.substring(0, path.indexOf(".")) + "_" + h + ".csv"));
 		
-		cubes = new ArrayList<ArrayList<ArrayList<Cube>>>(depth);
-		for(int d = 0; d<depth; d++)
+		cubes = new ArrayList<ArrayList<ArrayList<Cube>>>(height);
+		for(int h = 0; h<height; h++)
 		{
-			cubes.add(new ArrayList<ArrayList<Cube>>(rows));
-			for(int i = 0; i<rows; i++)
+			cubes.add(new ArrayList<ArrayList<Cube>>(depth));
+			for(int d = 0; d<depth; d++)
 			{
-				cubes.get(d).add(new ArrayList<Cube>(cols));
-				for(int j = 0; j<cols; j++)
-					cubes.get(d).get(i).add(new Cube(map3d.get(d).getInt(i, j), dimCubo));
+				cubes.get(h).add(new ArrayList<Cube>(width));
+				for(int w = 0; w<width; w++)
+					cubes.get(h).get(d).add(new Cube(map3d.get(h).getInt(d, w), dimCubo));
 			}
 		}
 	}
 	public void drawGridLike()
 	{
-		int tZ = dimCubo / 2;
-		for(int d = 0; d<depth; d++)
+		int tY = dimCubo / 2;
+		for(int h = 0; h<height; h++)
 		{
-			int tY = dimCubo / 2;
-			for(int i = 0; i<rows; i++)
+			int tZ = dimCubo / 2;
+			for(int d = 0; d<depth; d++)
 			{
 				int tX = dimCubo/2;
-				for(int j = 0; j<cols; j++)
-					cubes.get(d).get(i).get(j).draw(tX + dimCubo * j, tY, tZ);
-				tY += dimCubo;
+				for(int w = 0; w<width; w++)
+					cubes.get(h).get(d).get(w).draw(tX + dimCubo * w, tY, tZ);
+				tZ += dimCubo;
 			}
-			tZ += dimCubo;
+			tY += dimCubo;
 		}
 	}
 	
@@ -86,86 +91,88 @@ class Map
 		if(x < 0 || y < 0 || z < 0)
 			return;
 		// assert(false) : "X : " + x + " Y : " + y + " Z : " +z; 
-		if(x >= cols || y >= rows || z >= depth)
+		if(x >= width || y >= height || z >= depth)
 		{
 			
 			multidimensionalResize(x, y, z);
 		}
-		// assert(false) : "Errore: d = " + depth + " r = " + rows + " c = " +  cols;
-		cubes.get(z).get(y).get(x).changeType(type);
-		map3d.get(z).setInt(y, x, type);
+		// assert(false) : "Errore: d = " + depth + " r = " + height + " c = " +  width;
+		cubes.get(y).get(z).get(x).changeType(type);
+		map3d.get(y).setInt(y, x, type);
 	}
 	
 	private void multidimensionalResize(int x, int y, int z)
 	{
-		if(cols <= x)
+		if(width <= x)
 		{
-			for(int d = 0; d<depth; d++)
-				for(int j = cols; j<=x; j++)
+			for(int h = 0; h<height; h++)
+				for(int w = width; w<=x; w++)
 				{
-					map3d.get(d).addColumn();
-					for(int i = 0; i<rows; i++)
+					map3d.get(h).addColumn();
+					for(int d = 0; d<depth; d++)
 					{
-						map3d.get(d).setInt(i, j, 0);
-						cubes.get(d).get(i).add(new Cube(0, dimCubo));
+						map3d.get(h).setInt(d, w, 0);
+						cubes.get(h).get(d).add(new Cube(0, dimCubo));
 					}
 				}
-			cols = x+1;
+			width = x+1;
 		}
 		
-		if(rows <= y)
+		if(height <= y)
 		{
-			for(int d = 0; d<depth; d++)
-				for(int i = rows; i<=y; i++)
-				{
-					map3d.get(d).addRow();
-					cubes.get(d).add(new ArrayList<Cube>(cols));
-					for(int j = 0; j<cols; j++)
-					{
-						map3d.get(d).setInt(i, j, 0);
-						cubes.get(d).get(i).add(new Cube(0, dimCubo));
-					}
-				}
-			rows = y+1;
-		}
-		
-		if(depth <= z)
-		{
-			for(int d = depth; d<=z; d++)
+			for(int h = height; height<=y; height++)
 			{
 				map3d.add(new Table());
-				cubes.add(new ArrayList<ArrayList<Cube>>(rows));
-				for(int j = 0; j<cols; j++)
-					map3d.get(d).addColumn();
-				for(int i = 0; i<rows; i++)
+				cubes.add(new ArrayList<ArrayList<Cube>>(depth));
+				for(int w = 0; w<width; w++)
+					map3d.get(h).addColumn();
+				for(int d = 0; d<depth; d++)
 				{
-					map3d.get(d).addRow();
-					cubes.get(d).add(new ArrayList<Cube>(cols));
-					for(int j = 0; j<cols; j++)
+					map3d.get(h).addRow();
+					cubes.get(h).add(new ArrayList<Cube>(width));
+					for(int w = 0; w<width; w++)
 					{
-						map3d.get(d).setInt(i, j, 0);
-						cubes.get(d).get(i).add(new Cube(0, dimCubo));
+						map3d.get(d).setInt(d, w, 0);
+						cubes.get(h).get(d).add(new Cube(0, dimCubo));
 					}
 				}
 				depth++;
 			}
 		}
 		
+		if(depth <= z)
+		{
+			for(int h = 0; h<height; h++)
+				for(int d = depth; d<=z; d++)
+				{
+					map3d.get(h).addRow();
+					cubes.get(h).add(new ArrayList<Cube>(width));
+					for(int w = 0; w<width; w++)
+					{
+						map3d.get(h).setInt(d, w, 0);
+						cubes.get(h).get(d).add(new Cube(0, dimCubo));
+					}
+				}
+			height = y+1;
+		}
+		
+		
+		
 	}
 	public void saveMap(String path)
 	{
 		PrintWriter out = createWriter(path);
-		out.print("" + cols + "," + rows + "," + depth);
+		out.print("" + width + "," + height + "," + depth);
 		out.close();
-		for(int d = 0; d<depth; d++)
+		for(int h = 0; h<height; h++)
 		{
-			out = createWriter(path.substring(0, path.indexOf(".")) + "_" + d + ".csv");
-			for(int i = 0; i<rows; i++)
+			out = createWriter(path.substring(0, path.indexOf(".")) + "_" + (height - h - 1) + ".csv");
+			for(int d = 0; d<depth; d++)
 			{
-				for(int j = 0; j<cols; j++)
+				for(int w = 0; w<width; w++)
 				{
-					out.print("" + map3d.get(d).getInt(i, j));
-					if(j != cols - 1)
+					out.print("" + map3d.get(h).getInt(d, w));
+					if(w != width - 1)
 						out.print(",");
 				}
 				out.println();
@@ -175,15 +182,15 @@ class Map
 	}
 	public void redoCubes()
 	{
-		cubes = new ArrayList<ArrayList<ArrayList<Cube>>>(depth);
-		for(int d = 0; d<depth; d++)
+		cubes = new ArrayList<ArrayList<ArrayList<Cube>>>(height);
+		for(int h = 0; h<height; h++)
 		{
-			cubes.add(new ArrayList<ArrayList<Cube>>(rows));
-			for(int i = 0; i<rows; i++)
+			cubes.add(new ArrayList<ArrayList<Cube>>(depth));
+			for(int d = 0; d<depth; d++)
 			{
-				cubes.get(d).add(new ArrayList<Cube>(cols));
-				for(int j = 0; j<cols; j++)
-					cubes.get(d).get(i).add(new Cube(map3d.get(d).getInt(i, j), dimCubo));
+				cubes.get(h).add(new ArrayList<Cube>(width));
+				for(int w = 0; w<width; w++)
+					cubes.get(h).get(d).add(new Cube(map3d.get(h).getInt(d, w), dimCubo));
 			}
 		}
 	}
