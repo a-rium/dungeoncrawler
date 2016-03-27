@@ -13,7 +13,7 @@ class Map
 	private ArrayList<Table> map3d;
 	private ArrayList<ArrayList<ArrayList<Cube>>> cubes;
 
-	public Map(int width, int height, int depths)
+	public Map(int width, int height, int depth)
 	{
 		this.width = width;
 		this.height = height;
