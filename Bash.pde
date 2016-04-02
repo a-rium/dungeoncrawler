@@ -68,6 +68,12 @@ class Bash
 			else if(cmd[1].equals("off"))
 				delimiter = false;
 		}
+		else if(cmd[0].equals("print") && cmd.length == 2)
+			map.printFloor(Integer.parseInt(cmd[1]));
+		else if(cmd[0].equals("startlog") && cmd.length == 2)
+			startLog(cmd[1]);
+		else if(cmd[0].equals("endlog") && cmd.length == 1)
+			endLog();
 	}
 	
 	public String getPreviousCommand()

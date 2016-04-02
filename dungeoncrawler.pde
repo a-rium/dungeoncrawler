@@ -4,7 +4,9 @@ float orientationX;
 float orientationY;
 float orientationZ;
 
-boolean phase = false;
+int phase = 0;
+
+//boolean phase = false;
 
 boolean buildMode = false;
 boolean delimiter = false;
@@ -19,6 +21,10 @@ Bash bash;
 String command = "";
 boolean inBash = false;
 
+PrintWriter logger;
+boolean logging = false;
+
+
 void setup()
 {
 	size(1200, 700, P3D);
@@ -32,16 +38,13 @@ void setup()
 	wood = loadImage("src/wood.jpg");
 	stone = loadImage("src/stone.jpg");
 	noStroke();
-	map = new Map("src/map.csv");
+	map = new Map("solid_block.csv");
 	bash = new Bash(5);
 	textSize(20);
-	
-
 }
 
 void draw()
 {
-	
 	camera(eyeX, eyeY, eyeZ,
 		   orientationX, orientationY,
            orientationZ, 0, 1, 0);
@@ -133,15 +136,25 @@ void keyPressed()
 			// Posiziona un blocco  davanti se si e' in modalita di editing
 			case ' ': 
 						if(buildMode)
+						{
 							map.setCube(floor(orientationX / dimCubo), 
 										floor(orientationY / dimCubo), 
 										floor(orientationZ / dimCubo), 1);
+							if(logging) logger.println("Set block at " + floor(orientationX / dimCubo) + " "
+																	   + floor(orientationY / dimCubo) + " "
+																	   + floor(orientationZ / dimCubo));
+						}
 						break;
 			case '<': 
 				if(buildMode)
+				{
 					map.setCube(floor(orientationX / dimCubo), 
 								floor(orientationY / dimCubo), 
 								floor(orientationZ / dimCubo), 0);
+					if(logging) logger.println("Removed block at " + floor(orientationX / dimCubo) + " "
+																	   + floor(orientationY / dimCubo) + " "
+																	   + floor(orientationZ / dimCubo));
+				}
 				break;
 			default: break;
 		}
