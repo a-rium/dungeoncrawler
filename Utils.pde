@@ -136,35 +136,6 @@ void teleport(int x, int y, int z)
 	
 }
 
-void loadMedia(String path)
-{
-	Table content = loadTable(path);
-	content.removeRow(0);
-	sources = new HashMap<Integer, String>(content.getRowCount());
-	textures = new HashMap<Integer, PImage>(content.getRowCount());
-	types = new HashMap<Integer, String>(content.getRowCount());
-	for(int i = 0; i<content.getRowCount(); i++)
-	{
-		sources.put(content.getInt(i, 0), content.getString(i, 1));
-		textures.put(content.getInt(i, 0),loadImage(content.getString(i, 1)));
-		if(content.getString(i, 2) != null)
-		{
-			if(content.getString(i, 2).toLowerCase().equals("stair"))
-				types.put(content.getInt(i, 0), "stair");
-		}
-		else
-			types.put(content.getInt(i, 0), "block");
-	}
-}
-
-import java.util.Map;
-
-void saveMedia(PrintWriter writer)
-{
-	for(Integer key : sources.keySet())
-		writer.println("" + key + "," + sources.get(key));
-}
-
 void startLog(String path)
 {
 	if(logging) println("Already logging, call endlog to stop.");

@@ -38,10 +38,7 @@ class Bash
 		else if(cmd[0].equals("save") && cmd.length == 2)
 			map.saveMap(cmd[1]);
 		else if(cmd[0].equals("load") && cmd.length == 2)
-		{
-			loadMedia(cmd[1]);
 			map = new Map(cmd[1]);
-		}
 		else if(cmd[0].equals("new") && (cmd.length == 1  || cmd.length == 4))
 		{
 			if(cmd.length == 1)

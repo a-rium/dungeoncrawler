@@ -6,19 +6,29 @@
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 
+HashMap<Integer, PImage> textures;		// e' globale, di modo che sia visibile a tutti i solidi
 
 class Map
 {
 	private int width, height, depth;
 	private ArrayList<Table> map3d;
 	private ArrayList<ArrayList<ArrayList<Solid>>> cubes;
+	
+	private HashMap<Integer, String> sources;
+	private HashMap<Integer, String> types;
+
 
 	public Map(int width, int height, int depth)
 	{
 		this.width = width;
 		this.height = height;
 		this.depth = depth;
+		
+		sources = new HashMap<Integer, String>();
+		textures = new HashMap<Integer, PImage>();
+		types = new HashMap<Integer, String>();
 		
 		map3d = new ArrayList<Table>(height);
 		for(int h = 0; h<height; h++)		//creazione di una mappa 3d vuota di dimensioni 10x10x10
@@ -56,15 +66,8 @@ class Map
 	public Map(String path)
 	{
 		try{
-			Table info = loadTable(path);
-			width = info.getInt(0, 0);
-			height = info.getInt(0, 1);
-			depth = info.getInt(0, 2);
-			
-			map3d = new ArrayList<Table>(height);
-			for(int h = height - 1; h>=0; h--)
-				map3d.add(loadTable(path.substring(0, path.indexOf(".")) + "_" + h + ".csv"));
-			
+			loadMedia(path);
+
 			cubes = new ArrayList<ArrayList<ArrayList<Solid>>>(height);
 			for(int h = 0; h<height; h++)
 			{
@@ -83,7 +86,7 @@ class Map
 				}
 			}
 		}
-		catch(NullPointerException n){ println("Couldn't open file " + path); }
+		catch(NullPointerException n){ println("Error: accessing to null object."); }
 	}
 	public void drawGridLike()
 	{
@@ -111,23 +114,7 @@ class Map
 		
 		translate(width * dimCubo / 2, height * dimCubo / 2, depth * dimCubo / 2);
 		box(width * dimCubo, height * dimCubo, depth * dimCubo);
-		/*
-		
-		beginShape();
-		vertex(0, 0, 0);
-		vertex(width * dimCubo, 0, 0);
-		vertex(0, height * dimCubo, 0);
-		vertex(width * dimCubo, height * dimCubo, 0);
-		
-		vertex(0, 0, depth * dimCubo);
-		vertex(width * dimCubo, 0, depth * dimCubo);
-		vertex(0, height * dimCubo, depth * dimCubo);
-		vertex(width * dimCubo, height * dimCubo, depth * dimCubo);
-		
-		
-		
-		endShape();
-		*/
+
 		popMatrix();
 	}
 	
@@ -261,5 +248,45 @@ class Map
 				}
 			}
 		}
+	}
+	
+	private void loadMedia(String path)
+	{
+		try{
+			Table content = loadTable(path);
+			width = content.getInt(0, 0);
+			height = content.getInt(0, 1);
+			depth = content.getInt(0, 2);
+			content.removeRow(0);
+			sources = new HashMap<Integer, String>(content.getRowCount());
+			textures = new HashMap<Integer, PImage>(content.getRowCount());
+			types = new HashMap<Integer, String>(content.getRowCount());
+			for(int i = 0; i<content.getRowCount(); i++)
+			{
+				sources.put(content.getInt(i, 0), content.getString(i, 1));
+				textures.put(content.getInt(i, 0),loadImage(content.getString(i, 1)));
+				if(content.getString(i, 2) != null)
+				{
+					if(content.getString(i, 2).toLowerCase().equals("stair"))
+						types.put(content.getInt(i, 0), "stair");
+				}
+				else
+					types.put(content.getInt(i, 0), "block");
+			}
+			map3d = new ArrayList<Table>(height);
+			for(int h = height - 1; h>=0; h--)
+				map3d.add(loadTable(path.substring(0, path.indexOf(".")) + "_" + h + ".csv"));
+		} 
+		catch(NullPointerException n)
+		{ 
+			println("Couldn't open file " +  path + " (Exception in loadMedia)");
+			width = height = depth = 0;
+		}
+	}
+	
+	private void saveMedia(PrintWriter out)
+	{
+		for(Integer key : sources.keySet())
+			out.println("" + key + "," + sources.get(key));
 	}
 }

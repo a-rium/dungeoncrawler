@@ -1,9 +1,4 @@
 
-import java.util.HashMap;
-// import java.util.Iterator;
-// import java.util.Map;
-// import java.util.Set;
-
 int dimCubo = 100;
 float orientationX;
 float orientationY;
@@ -28,10 +23,6 @@ boolean delimiter = false;
 
 float eyeX, eyeY, eyeZ;
 
-HashMap<Integer, String> sources;
-HashMap<Integer, PImage> textures;
-HashMap<Integer, String> types;
-
 PImage wood;		//type 1
 PImage stone;		//type 2
 
@@ -54,9 +45,6 @@ void setup()
 	orientationX = eyeX;
 	orientationY = eyeY;
 	orientationZ = eyeZ - dimCubo;
-	loadMedia("solid_block.csv");
-	wood = loadImage("src/wood.jpg");
-	stone = loadImage("src/stone.jpg");
 	noStroke();
 	map = new Map("solid_block.csv");
 	bash = new Bash(5);
