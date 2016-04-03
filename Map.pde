@@ -7,6 +7,7 @@
 import java.util.ArrayList;
 import java.util.Arrays;
 
+
 class Map
 {
 	private int width, height, depth;
@@ -41,7 +42,13 @@ class Map
 			{
 				cubes.get(h).add(new ArrayList<Solid>(width));
 				for(int w = 0; w<width; w++)
-					cubes.get(h).get(d).add(new Cube(map3d.get(h).getInt(d, w), dimCubo));
+				{
+					int type = map3d.get(h).getInt(d, w);
+					if(types.get(type).equals("block"))
+						cubes.get(h).get(d).add(new Cube(type, dimCubo));
+					else if(types.get(type).equals("stair"))
+						cubes.get(h).get(d).add(new Stair(type, dimCubo));
+				}
 			}
 		}
 	}
@@ -66,7 +73,13 @@ class Map
 				{
 					cubes.get(h).add(new ArrayList<Solid>(width));
 					for(int w = 0; w<width; w++)
-						cubes.get(h).get(d).add(new Cube(map3d.get(h).getInt(d, w), dimCubo));
+					{
+						int type = map3d.get(h).getInt(d, w);
+						if(types.get(type).equals("block"))
+							cubes.get(h).get(d).add(new Cube(type, dimCubo));
+						else if(types.get(type).equals("stair"))
+							cubes.get(h).get(d).add(new Stair(type, dimCubo));
+					}
 				}
 			}
 		}
@@ -129,7 +142,10 @@ class Map
 			multidimensionalResize(x, y, z);
 		}
 		// assert(false) : "Errore: d = " + depth + " r = " + height + " c = " +  width;
-		cubes.get(y).get(z).get(x).changeType(type);
+		if(types.get(type).equals("block"))
+			cubes.get(y).get(z).set(x, new Cube(type, dimCubo));
+		else if(types.get(type).equals("stair"))
+			cubes.get(y).get(z).set(x, new Stair(type, dimCubo));
 		map3d.get(y).setInt(z, x, type);
 	}
 	
@@ -194,7 +210,8 @@ class Map
 	public void saveMap(String path)
 	{
 		PrintWriter out = createWriter(path);
-		out.print("" + width + "," + height + "," + depth);
+		out.println("" + width + "," + height + "," + depth);
+		saveMedia(out);		// salvataggio dei materiali utilizzati
 		out.close();
 		for(int h = 0; h<height; h++)
 		{
@@ -235,7 +252,13 @@ class Map
 			{
 				cubes.get(h).add(new ArrayList<Solid>(width));
 				for(int w = 0; w<width; w++)
-					cubes.get(h).get(d).add(new Cube(map3d.get(h).getInt(d, w), dimCubo));
+				{
+					int type = map3d.get(h).getInt(d, w);
+					if(types.get(type).equals("block"))
+						cubes.get(h).get(d).add(new Cube(type, dimCubo));
+					else if(types.get(type).equals("stair"))
+						cubes.get(h).get(d).add(new Stair(type, dimCubo));
+				}
 			}
 		}
 	}

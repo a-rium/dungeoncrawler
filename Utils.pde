@@ -3,80 +3,80 @@
 
 void moveForward()
 {
-	eyeX += dimCubo * sin(radians(phase));
-	eyeZ -= dimCubo * cos(radians(phase));
+	eyeX += movingSpeed * sin(radians(phase));
+	eyeZ -= movingSpeed * cos(radians(phase));
 	
 	orientationX = eyeX + dimCubo * sin(radians(phase));
 	orientationZ = eyeZ - dimCubo * cos(radians(phase));
 	// if(orientationX == eyeX)
 	// {
 		// float aux = eyeZ;
-		// eyeZ += orientationZ > eyeZ ? dimCubo : -dimCubo;
-		// orientationZ = eyeZ + (aux > eyeZ ? - dimCubo : dimCubo);
+		// eyeZ += orientationZ > eyeZ ? movingSpeed : -movingSpeed;
+		// orientationZ = eyeZ + (aux > eyeZ ? - movingSpeed : movingSpeed);
 	// }
 	// else
 	// {
 		// float aux = eyeX;
-		// eyeX += orientationX > eyeX ? dimCubo : -dimCubo;
-		// orientationX = eyeX + (aux > eyeX ? -dimCubo : dimCubo);
+		// eyeX += orientationX > eyeX ? movingSpeed : -movingSpeed;
+		// orientationX = eyeX + (aux > eyeX ? -movingSpeed : movingSpeed);
 	// }
 }
 
 void moveBack()
 {
-	eyeX -= dimCubo * sin(radians(phase));
-	eyeZ += dimCubo * cos(radians(phase));
+	eyeX -= movingSpeed * sin(radians(phase));
+	eyeZ += movingSpeed * cos(radians(phase));
 	
 	orientationX = eyeX + dimCubo * sin(radians(phase));
 	orientationZ = eyeZ - dimCubo * cos(radians(phase));
 	// if(orientationX == eyeX)
 	// {
 		// float aux = eyeZ;
-		// eyeZ += orientationZ < eyeZ ? dimCubo : -dimCubo;
-		// orientationZ = eyeZ + (aux < eyeZ ? -dimCubo : dimCubo);
+		// eyeZ += orientationZ < eyeZ ? movingSpeed : -movingSpeed;
+		// orientationZ = eyeZ + (aux < eyeZ ? -movingSpeed : movingSpeed);
 	// }
 	// else
 	// {
 		// float aux = eyeX;
-		// eyeX += orientationX < eyeX ? dimCubo : -dimCubo;
-		// orientationX = eyeX + (aux < eyeX ? -dimCubo : dimCubo);
+		// eyeX += orientationX < eyeX ? movingSpeed : -movingSpeed;
+		// orientationX = eyeX + (aux < eyeX ? -movingSpeed : movingSpeed);
 	// }
 }
 
 void moveLeft()
 {
-	eyeX += dimCubo * sin(radians(phase - 90));
-	eyeZ -= dimCubo * cos(radians(phase - 90));
+	eyeX += movingSpeed * sin(radians(phase - 90));
+	eyeZ -= movingSpeed * cos(radians(phase - 90));
 	
 	orientationX = eyeX + dimCubo * sin(radians(phase));
 	orientationZ = eyeZ - dimCubo * cos(radians(phase));
 	// if(orientationX == eyeX)
 	// {
-		// eyeX += orientationZ < eyeZ ? -dimCubo : dimCubo;
+		// eyeX += orientationZ < eyeZ ? -movingSpeed : movingSpeed;
 		// orientationX = eyeX;
 	// }
 	// else
 	// {
-		// eyeZ += orientationX < eyeX ? dimCubo : -dimCubo;
+		// eyeZ += orientationX < eyeX ? movingSpeed : -movingSpeed;
 		// orientationZ = eyeZ;
 	// }
 }
 
 void moveRight()
 {
-	eyeX += dimCubo * sin(radians(phase + 90));
-	eyeZ -= dimCubo * cos(radians(phase + 90));
+	eyeX += movingSpeed * sin(radians(phase + 90));
+	eyeZ -= movingSpeed * cos(radians(phase + 90));
 	
 	orientationX = eyeX + dimCubo * sin(radians(phase));
 	orientationZ = eyeZ - dimCubo * cos(radians(phase));
 	// if(orientationX == eyeX)
 	// {
-		// eyeX += -(orientationZ < eyeZ ? -dimCubo : dimCubo);
+		// eyeX += -(orientationZ < eyeZ ? -movingSpeed : movingSpeed);
 		// orientationX = eyeX;
 	// }
 	// else
 	// {
-		// eyeZ += -(orientationX < eyeX ? dimCubo : -dimCubo);
+		// eyeZ += -(orientationX < eyeX ? movingSpeed : -movingSpeed);
 		// orientationZ = eyeZ;
 	// }
 }
@@ -85,53 +85,85 @@ void moveRight()
 
 void turnLeft()
 {
-	phase = (phase - 90) % (360);
+	phase = (phase - turnSpeed) % (360);
 	orientationX = eyeX + dimCubo * sin(radians(phase));
 	orientationZ = eyeZ - dimCubo * cos(radians(phase));
 	
+	
 	// if(orientationX != eyeX)
 	// {
-		// orientationZ = orientationX > eyeX ? eyeZ - dimCubo : eyeZ + dimCubo;
+		// orientationZ = orientationX > eyeX ? eyeZ - movingSpeed : eyeZ + movingSpeed;
 		// orientationX = eyeX;
 	// }
 	// else
 	// {
-		// orientationX = orientationZ > eyeZ ? eyeX + dimCubo : eyeX - dimCubo;
+		// orientationX = orientationZ > eyeZ ? eyeX + movingSpeed : eyeX - movingSpeed;
 		// orientationZ = eyeZ; 
 	// }
 }
 
 void turnRight()
 {
-	phase = (phase + 90) % (360);
+	phase = (phase + turnSpeed) % (360);
 	orientationX = eyeX + dimCubo * sin(radians(phase));
 	orientationZ = eyeZ - dimCubo * cos(radians(phase));
 	// if(orientationX != eyeX)
 	// {
-		// orientationZ = orientationX > eyeX ? eyeZ + dimCubo : eyeZ - dimCubo;
+		// orientationZ = orientationX > eyeX ? eyeZ + movingSpeed : eyeZ - movingSpeed;
 		// orientationX = eyeX;
 	// }
 	// else
 	// {
-		// orientationX = orientationZ > eyeZ ? eyeX - dimCubo : eyeX + dimCubo;
+		// orientationX = orientationZ > eyeZ ? eyeX - movingSpeed : eyeX + movingSpeed;
 		// orientationZ = eyeZ; 
 	// }
 }
 
 void teleport(int x, int y, int z)
 {
-	orientationX = (orientationX == eyeX) ? x * dimCubo + dimCubo/2 : 
-				   (orientationX > eyeX ? x * dimCubo + 3*dimCubo/2 : x * dimCubo - dimCubo/2);
-	orientationY = y * dimCubo + dimCubo/2;
-    orientationZ = (orientationZ == eyeZ) ? z * dimCubo + dimCubo/2: 
-				   (orientationZ > eyeZ ? z * dimCubo + dimCubo/2 : z * dimCubo - 3*dimCubo/2);
-	eyeX = x * dimCubo + dimCubo/2;
-	eyeY = y * dimCubo + dimCubo/2;
-	eyeZ = z * dimCubo + dimCubo/2;
+	// orientationX = (orientationX == eyeX) ? x * movingSpeed + movingSpeed/2 : 
+				   // (orientationX > eyeX ? x * movingSpeed + 3*movingSpeed/2 : x * movingSpeed - movingSpeed/2);
+	// orientationY = y * movingSpeed + movingSpeed/2;
+    // orientationZ = (orientationZ == eyeZ) ? z * movingSpeed + movingSpeed/2: 
+				   // (orientationZ > eyeZ ? z * movingSpeed + movingSpeed/2 : z * movingSpeed - 3*movingSpeed/2);
+	eyeX = x * dimCubo + movingSpeed/2;
+	eyeY = y * dimCubo + movingSpeed/2;
+	eyeZ = z * dimCubo + movingSpeed/2;
+	
+	orientationX = eyeX + dimCubo * sin(radians(phase));
+	orientationZ = eyeZ - dimCubo * cos(radians(phase));
+	orientationY = eyeY;
 	
 }
 
+void loadMedia(String path)
+{
+	Table content = loadTable(path);
+	content.removeRow(0);
+	sources = new HashMap<Integer, String>(content.getRowCount());
+	textures = new HashMap<Integer, PImage>(content.getRowCount());
+	types = new HashMap<Integer, String>(content.getRowCount());
+	for(int i = 0; i<content.getRowCount(); i++)
+	{
+		sources.put(content.getInt(i, 0), content.getString(i, 1));
+		textures.put(content.getInt(i, 0),loadImage(content.getString(i, 1)));
+		if(content.getString(i, 2) != null)
+		{
+			if(content.getString(i, 2).toLowerCase().equals("stair"))
+				types.put(content.getInt(i, 0), "stair");
+		}
+		else
+			types.put(content.getInt(i, 0), "block");
+	}
+}
 
+import java.util.Map;
+
+void saveMedia(PrintWriter writer)
+{
+	for(Integer key : sources.keySet())
+		writer.println("" + key + "," + sources.get(key));
+}
 
 void startLog(String path)
 {
@@ -149,3 +181,11 @@ void endLog()
 	}
 	else println("No log to save. Start a new one with startlog");
 }
+
+// Enumeratore per classificare il tipo di entita all'interno del mondo
+
+enum TYPE
+{
+	BLOCK, STAIR;
+}
+

@@ -1,4 +1,9 @@
 
+import java.util.HashMap;
+// import java.util.Iterator;
+// import java.util.Map;
+// import java.util.Set;
+
 int dimCubo = 100;
 float orientationX;
 float orientationY;
@@ -6,12 +11,26 @@ float orientationZ;
 
 int phase = 0;
 
-//boolean phase = false;
+boolean turningLeft = false;
+boolean turningRight = false;
+int turningCounter = 1;
+int turnSpeed = 6; // piu alto e' il valore piu veloce e' la rotazione
+
+boolean movingForward = false;
+boolean movingBackwards = false;
+boolean movingLeft = false;
+boolean movingRight = false;
+int movingCounter = 0;
+int movingSpeed = 10; // piu alto e' il valore piu veloce e' il movimento
 
 boolean buildMode = false;
 boolean delimiter = false;
 
 float eyeX, eyeY, eyeZ;
+
+HashMap<Integer, String> sources;
+HashMap<Integer, PImage> textures;
+HashMap<Integer, String> types;
 
 PImage wood;		//type 1
 PImage stone;		//type 2
@@ -35,6 +54,7 @@ void setup()
 	orientationX = eyeX;
 	orientationY = eyeY;
 	orientationZ = eyeZ - dimCubo;
+	loadMedia("solid_block.csv");
 	wood = loadImage("src/wood.jpg");
 	stone = loadImage("src/stone.jpg");
 	noStroke();
@@ -45,6 +65,10 @@ void setup()
 
 void draw()
 {
+	if(turningLeft || turningRight)
+		handleCameraTurning();
+	if(movingForward || movingBackwards || movingLeft || movingRight)
+		handleMovementAnimation();
 	camera(eyeX, eyeY, eyeZ,
 		   orientationX, orientationY,
            orientationZ, 0, 1, 0);
@@ -60,7 +84,7 @@ void draw()
 	text("Facing: " + (orientationX == eyeX + dimCubo
 					? "RIGHT" : (orientationX == eyeX - dimCubo
 					? "LEFT" : (orientationZ == eyeZ + dimCubo 
-					? "BACK" : "FORWARD"))), 0, 20);
+					? "BACKWARDS" : "FORWARD"))), 0, 20);
 	text("X : " + floor(eyeX / dimCubo) +
 		 "\nY : " + floor(eyeY / dimCubo) +
 		 "\nZ : " + floor(eyeZ / dimCubo) + 
@@ -68,6 +92,8 @@ void draw()
 		 "\nY : " + floor(orientationY / dimCubo) +
 		 "\nZ : " + floor(orientationZ / dimCubo) + 
 		 "\nSize : " + dimCubo +
+		 "\nMoving Speed : " + movingSpeed +
+		 "\nTurn Speed : " + turnSpeed +
 		 (buildMode ? "\nEDITING" : ""), 0, 45);
 		 
 	if(inBash) text(command + "|", 0, height - 25);
@@ -90,22 +116,25 @@ void mouseDragged()
 
 void keyPressed()
 {
+	if(turningLeft || turningRight												//se sta ruotando non fare nulla
+			|| movingForward || movingBackwards || movingLeft || movingRight)	//se si sta muovendo non fare nulla	
+		return;
 	if(!inBash)
 	{
 		switch(key)
 		{
 			// Movimento in avanti
-			case 'w' : moveForward(); break;//eyeZ -= dimCubo; orientationZ -= dimCubo; break;
+			case 'w' : movingForward = true; break;//eyeZ -= dimCubo; orientationZ -= dimCubo; break;
 			// Movimento indietro
-			case 's' : moveBack(); break; //eyeZ += dimCubo; orientationZ += dimCubo; break;
+			case 's' : movingBackwards = true; break; //eyeZ += dimCubo; orientationZ += dimCubo; break;
 			// Rotazione della telecamera verso sinistra
-			case 'a' : turnLeft();  break;
+			case 'a' : turningLeft = true;  break;
 			// Rotazione della telecamera verso destra
-			case 'd' : turnRight(); break;
+			case 'd' : turningRight = true; break;
 			// Movimento a sinistra
-			case 'z' : moveLeft(); break; //eyeX -= dimCubo; orientationX -= dimCubo; break;
+			case 'z' : movingLeft = true; break; //eyeX -= dimCubo; orientationX -= dimCubo; break;
 			// Movimento a destra
-			case 'c' : moveRight(); break; //eyeX += dimCubo; orientationX += dimCubo; break;
+			case 'c' : movingRight = true; break; //eyeX += dimCubo; orientationX += dimCubo; break;
 			// Movimento in alto
 			case 'o' : eyeY -= dimCubo; orientationY -= dimCubo; break;
 			// Movimento in basso
@@ -193,6 +222,48 @@ void keyPressed()
 				command += key;
 			
 		}
+	}
+}
+
+void handleCameraTurning()
+{
+	if(turningLeft)
+	{
+		turnLeft();
+		if(turningCounter >= 90/turnSpeed)
+		{
+			turningLeft = false;
+			turningCounter = 1;
+		}
+		else turningCounter++;
+	}
+	else
+	{
+		turnRight();
+		if(turningCounter >= 90/turnSpeed)
+		{
+			turningRight = false;
+			turningCounter = 1;
+		}
+		else turningCounter++;
+	}
+}
+
+void handleMovementAnimation()
+{
+	if(movingForward)
+		moveForward();
+	else if(movingBackwards)
+		moveBack();
+	else if(movingLeft)
+		moveLeft();
+	else
+		moveRight();
+	movingCounter++;
+	if(movingCounter >= 100/movingSpeed)
+	{
+		movingForward = movingBackwards = movingLeft = movingRight = false;
+		movingCounter = 0;
 	}
 }
 

@@ -45,10 +45,6 @@ abstract class Solid
 
 	protected void setCorrespondingTexture()
 	{
-		switch(type)
-		{
-			case 1 : solid.setTexture(wood); break;
-			case 2 : solid.setTexture(stone); break;
-		}
+		solid.setTexture(textures.get(type));
 	}
 }
