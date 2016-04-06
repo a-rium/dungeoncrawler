@@ -153,10 +153,27 @@ void endLog()
 	else println("No log to save. Start a new one with startlog");
 }
 
-// Enumeratore per classificare il tipo di entita all'interno del mondo
 
-enum TYPE
+int getNextTexture()
 {
-	BLOCK, STAIR;
+	if(Collections.max(textures.keySet()).intValue() <= currentTexture)
+		return Collections.min(textures.keySet());
+	for(Integer key : textures.keySet())
+	{
+		if(key > currentTexture)
+			return key;
+	}
+	return -1;
 }
 
+int getPreviousTexture()
+{
+	if(Collections.min(textures.keySet()).intValue() >= currentTexture)
+		return Collections.max(textures.keySet());
+	for(Integer key : textures.keySet())
+	{
+		if(key < currentTexture)
+			return key;
+	}
+	return -1;
+}

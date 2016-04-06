@@ -26,6 +26,8 @@ float eyeX, eyeY, eyeZ;
 PImage wood;		//type 1
 PImage stone;		//type 2
 
+int currentTexture = -1;
+
 Map map;
 Bash bash;
 String command = "";
@@ -45,10 +47,11 @@ void setup()
 	orientationX = eyeX;
 	orientationY = eyeY;
 	orientationZ = eyeZ - dimCubo;
-	noStroke();
+//	noStroke();
 	map = new Map("solid_block.csv");
 	bash = new Bash(5);
 	textSize(20);
+	currentTexture = getNextTexture();
 }
 
 void draw()
@@ -82,8 +85,14 @@ void draw()
 		 "\nSize : " + dimCubo +
 		 "\nMoving Speed : " + movingSpeed +
 		 "\nTurn Speed : " + turnSpeed +
-		 (buildMode ? "\nEDITING" : ""), 0, 45);
-		 
+		 (buildMode ? "\nCurrent Texture ID : " + (currentTexture > 0 ? currentTexture : "None") : ""), 0, 45);
+	
+	if(buildMode && currentTexture > 0)
+	{
+		tint(255, 200);
+		image(textures.get(currentTexture), 30, height - 328, 128, 128);
+		tint(255, 0);
+	}
 	if(inBash) text(command + "|", 0, height - 25);
 	hint(ENABLE_DEPTH_TEST);
 	popMatrix();
@@ -156,7 +165,7 @@ void keyPressed()
 						{
 							map.setCube(floor(orientationX / dimCubo), 
 										floor(orientationY / dimCubo), 
-										floor(orientationZ / dimCubo), 1);
+										floor(orientationZ / dimCubo), currentTexture > 0 ? currentTexture : 0);
 							if(logging) logger.println("Set block at " + floor(orientationX / dimCubo) + " "
 																	   + floor(orientationY / dimCubo) + " "
 																	   + floor(orientationZ / dimCubo));
@@ -183,6 +192,14 @@ void keyPressed()
 					map.setCube(floor(orientationX / dimCubo), 
 								floor(orientationY / dimCubo), 
 								floor(orientationZ / dimCubo), 0);
+				break;
+			case LEFT:
+				if(buildMode)
+					currentTexture = getPreviousTexture();
+				break;
+			case RIGHT:
+				if(buildMode)
+					currentTexture = getNextTexture();
 				break;
 			default: break;
 		}

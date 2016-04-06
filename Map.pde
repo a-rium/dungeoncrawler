@@ -7,8 +7,11 @@
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Collections;
 
 HashMap<Integer, PImage> textures;		// e' globale, di modo che sia visibile a tutti i solidi
+HashMap<Integer, String> sources;
+HashMap<Integer, String> types;
 
 class Map
 {
@@ -16,8 +19,7 @@ class Map
 	private ArrayList<Table> map3d;
 	private ArrayList<ArrayList<ArrayList<Solid>>> cubes;
 	
-	private HashMap<Integer, String> sources;
-	private HashMap<Integer, String> types;
+	
 
 
 	public Map(int width, int height, int depth)
@@ -26,9 +28,11 @@ class Map
 		this.height = height;
 		this.depth = depth;
 		
-		sources = new HashMap<Integer, String>();
-		textures = new HashMap<Integer, PImage>();
-		types = new HashMap<Integer, String>();
+		//sources = new HashMap<Integer, String>();
+		//textures = new HashMap<Integer, PImage>();
+		//types = new HashMap<Integer, String>();
+		
+		//currentTexture = -1;
 		
 		map3d = new ArrayList<Table>(height);
 		for(int h = 0; h<height; h++)		//creazione di una mappa 3d vuota di dimensioni 10x10x10
@@ -54,10 +58,7 @@ class Map
 				for(int w = 0; w<width; w++)
 				{
 					int type = map3d.get(h).getInt(d, w);
-					if(types.get(type).equals("block"))
-						cubes.get(h).get(d).add(new Cube(type, dimCubo));
-					else if(types.get(type).equals("stair"))
-						cubes.get(h).get(d).add(new Stair(type, dimCubo));
+					cubes.get(h).get(d).add(new Cube(type, dimCubo));
 				}
 			}
 		}
@@ -78,7 +79,9 @@ class Map
 					for(int w = 0; w<width; w++)
 					{
 						int type = map3d.get(h).getInt(d, w);
-						if(types.get(type).equals("block"))
+						if(type == 0)
+							cubes.get(h).get(d).add(new Cube(type, dimCubo));
+						else if(types.get(type).equals("block"))
 							cubes.get(h).get(d).add(new Cube(type, dimCubo));
 						else if(types.get(type).equals("stair"))
 							cubes.get(h).get(d).add(new Stair(type, dimCubo));
@@ -125,11 +128,12 @@ class Map
 		// assert(false) : "X : " + x + " Y : " + y + " Z : " +z; 
 		if(x >= width || y >= height || z >= depth)
 		{
-			
+			//assert false : width + "" + height + "" + depth;
 			multidimensionalResize(x, y, z);
 		}
+		
 		// assert(false) : "Errore: d = " + depth + " r = " + height + " c = " +  width;
-		if(types.get(type).equals("block"))
+		if(type == 0  || types.get(type).equals("block"))
 			cubes.get(y).get(z).set(x, new Cube(type, dimCubo));
 		else if(types.get(type).equals("stair"))
 			cubes.get(y).get(z).set(x, new Stair(type, dimCubo));
@@ -171,7 +175,7 @@ class Map
 						cubes.get(h).get(d).add(new Cube(0, dimCubo));
 					}
 				}
-				depth++;
+				height++;
 			}
 		}
 		
@@ -188,7 +192,7 @@ class Map
 						cubes.get(h).get(d).add(new Cube(0, dimCubo));
 					}
 				}
-			height = y+1;
+			depth = z+1;
 		}
 		
 		
@@ -287,6 +291,19 @@ class Map
 	private void saveMedia(PrintWriter out)
 	{
 		for(Integer key : sources.keySet())
-			out.println("" + key + "," + sources.get(key));
+		{
+			out.print("" + key + "," + sources.get(key));
+			if(key > 0)
+			{
+				if(types.get(key).equals("stair"))
+					out.print(",stair");
+			}
+			out.println();
+		}
+	}
+	
+	public void printDimension()
+	{
+		println("Width : " + width + "\nHeight : " + height + "\nDepth : " +depth);
 	}
 }

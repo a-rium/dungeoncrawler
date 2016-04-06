@@ -7,25 +7,6 @@ class Stair extends Solid
 		super(type, size);
 		solid = createShape();
 		solid.beginShape();
-		// solid.vertex(0, 0, 0);
-		// solid.vertex(0, size, 0);
-		// solid.vertex(size, size, 0);
-		// solid.vertex(size, 0, 0);
-		
-		// solid.vertex(0, 0, 0);
-		// solid.vertex(size, 0, 0);
-		
-		// solid.vertex(size, 0, size);
-		// solid.vertex(0, 0, size);
-		// solid.vertex(0, 0, 0);
-		// solid.vertex(0, 0, size);
-		// solid.vertex(0, size, size);
-		// solid.vertex(0, size, 0);
-		// solid.vertex(0, size, size);
-		// solid.vertex(size, size, size);
-		// solid.vertex(size, size, 0);
-		// solid.vertex(size, size, size);
-		// solid.vertex(size, 0, size);
 		solid.vertex(0, 0, 0);
 		solid.vertex(dimCubo, 0, 0);
 		solid.vertex(dimCubo, 0, dimCubo / 4);
@@ -67,7 +48,16 @@ class Stair extends Solid
 		solid.vertex(0, 0, 0);
 		solid.vertex(0, dimCubo, 0);
 		solid.vertex(0, dimCubo, dimCubo);
+		solid.vertex(0, 0, dimCubo);
+		solid.vertex(0, 0, 0);
 		solid.endShape(CLOSE);
 		//setCorrespondingTexture();
+	}
+	
+	public void draw(int tX, int tY, int tZ)
+	{
+		stroke(5);
+		super.draw(tX - dimCubo / 2, tY - dimCubo / 2, tZ - dimCubo / 2);
+		noStroke();
 	}
 }

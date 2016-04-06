@@ -78,6 +78,8 @@ class Bash
 			turnSpeed = Integer.parseInt(cmd[1]);
 		else if(cmd[0].equals("chms") && cmd.length == 2)
 			movingSpeed = Integer.parseInt(cmd[1]);
+		else if(cmd[0].equals("dimension") && cmd.length == 1)
+			map.printDimension();
 	}
 	
 	public String getPreviousCommand()
