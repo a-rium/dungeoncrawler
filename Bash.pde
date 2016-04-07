@@ -48,19 +48,19 @@ class Bash
 							   Integer.parseInt(cmd[2]),
 							   Integer.parseInt(cmd[3]));
 		}
-		else if(cmd[0].equals("tp") && cmd.length == 4)
-			teleport(Integer.parseInt(cmd[1]),
-					 Integer.parseInt(cmd[2]),
-					 Integer.parseInt(cmd[3]));
-		else if(cmd[0].equals("size") && cmd.length == 2)
-		{
-			int x = floor(eyeX / dimCubo);
-			int y = floor(eyeY / dimCubo);
-			int z = floor(eyeZ / dimCubo);
-			dimCubo = Integer.parseInt(cmd[1]);
-			teleport(x, y, z);
-			map.redoCubes();
-		}
+		// else if(cmd[0].equals("tp") && cmd.length == 4)
+			// teleport(Integer.parseInt(cmd[1]),
+					 // Integer.parseInt(cmd[2]),
+					 // Integer.parseInt(cmd[3]));
+		// else if(cmd[0].equals("size") && cmd.length == 2)
+		// {
+			// int x = floor(eyeX / dimCubo);
+			// int y = floor(eyeY / dimCubo);
+			// int z = floor(eyeZ / dimCubo);
+			// dimCubo = Integer.parseInt(cmd[1]);
+			// teleport(x, y, z);
+			// map.redoCubes();
+		// }
 		else if(cmd[0].equals("delimiter") && cmd.length == 2)
 		{
 			if(cmd[1].equals("on"))

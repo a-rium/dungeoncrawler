@@ -1,8 +1,8 @@
 
 // Funzioni di movimento
-
+/*
 void moveForward()
-{
+{	
 	eyeX += movingSpeed * sin(radians(phase));
 	eyeZ -= movingSpeed * cos(radians(phase));
 	
@@ -135,6 +135,7 @@ void teleport(int x, int y, int z)
 	orientationY = eyeY;
 	
 }
+*/
 
 void startLog(String path)
 {

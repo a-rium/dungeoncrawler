@@ -302,6 +302,13 @@ class Map
 		}
 	}
 	
+	public boolean colliding(int x, int y, int z)
+	{
+		if(map3d.get(y).getInt(z, x) != 0)
+			return true;
+		return false;
+	}
+	
 	public void printDimension()
 	{
 		println("Width : " + width + "\nHeight : " + height + "\nDepth : " +depth);
