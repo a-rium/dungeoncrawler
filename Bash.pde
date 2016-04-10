@@ -31,9 +31,15 @@ class Bash
 		if(cmd[0].equals("edit") && cmd.length == 2)
 		{
 			if(cmd[1].equals("true"))
+			{
 				buildMode = true;
+				player.turnCollisionCheckingOff();
+			}
 			else if(cmd[1].equals("false"))
+			{
 				buildMode = false;
+				player.turnCollisionCheckingOn();
+			}
 		}
 		else if(cmd[0].equals("save") && cmd.length == 2)
 			map.saveMap(cmd[1]);
@@ -48,19 +54,15 @@ class Bash
 							   Integer.parseInt(cmd[2]),
 							   Integer.parseInt(cmd[3]));
 		}
-		// else if(cmd[0].equals("tp") && cmd.length == 4)
-			// teleport(Integer.parseInt(cmd[1]),
-					 // Integer.parseInt(cmd[2]),
-					 // Integer.parseInt(cmd[3]));
-		// else if(cmd[0].equals("size") && cmd.length == 2)
-		// {
-			// int x = floor(eyeX / dimCubo);
-			// int y = floor(eyeY / dimCubo);
-			// int z = floor(eyeZ / dimCubo);
-			// dimCubo = Integer.parseInt(cmd[1]);
-			// teleport(x, y, z);
-			// map.redoCubes();
-		// }
+		else if(cmd[0].equals("tp") && cmd.length == 4)
+			player.teleport(Integer.parseInt(cmd[1]),
+					 Integer.parseInt(cmd[2]),
+					 Integer.parseInt(cmd[3]));
+		else if(cmd[0].equals("size") && cmd.length == 2)
+		{
+			dimCubo = Integer.parseInt(cmd[1]);
+			map.redoCubes();
+		}
 		else if(cmd[0].equals("delimiter") && cmd.length == 2)
 		{
 			if(cmd[1].equals("on"))
@@ -80,6 +82,14 @@ class Bash
 			movingSpeed = Integer.parseInt(cmd[1]);
 		else if(cmd[0].equals("dimension") && cmd.length == 1)
 			map.printDimension();
+		else if(cmd[0].equals("collision") && cmd.length == 2)
+		{
+			if(cmd[1].equals("on"))
+				player.turnCollisionCheckingOn();
+			else if(cmd[1].equals("off"))
+				player.turnCollisionCheckingOff();
+			
+		}
 	}
 	
 	public String getPreviousCommand()

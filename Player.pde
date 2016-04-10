@@ -3,6 +3,7 @@
 class Player
 {
 	private float eyeX, eyeY, eyeZ;
+	private Coordinate roughPosition;
 	private float orientationX, orientationY, orientationZ;
 	private float altoX, altoY, altoZ;
 	
@@ -11,19 +12,23 @@ class Player
 	
 	private boolean movingForward, movingBackwards = false;
 	private boolean movingLeft, movingRight = false;
+	private boolean movingUp, movingDown = false;
+	private boolean collisionChecking = true;
 	// private int movingCounter = 0;
 	
 	private float phase;
 	
-	public Player()
+	public Player(int x, int y, int z)
 	{
-		eyeX = dimCubo / 2;
-		eyeY = dimCubo / 2;
-		eyeZ = dimCubo / 2;
+		eyeX = x * dimCubo + dimCubo / 2;
+		eyeY = y * dimCubo + dimCubo / 2;
+		eyeZ = z * dimCubo + dimCubo / 2;
 		
-		orientationX = eyeX;
+		roughPosition = new Coordinate(floor(eyeX / dimCubo), floor(eyeY / dimCubo), floor(eyeZ / dimCubo));
+		
+		orientationX = eyeX + dimCubo * sin(radians(phase));
 		orientationY = eyeY;
-		orientationZ = eyeZ - dimCubo;
+		orientationZ = eyeZ - dimCubo * cos(radians(phase));
 		
 		altoX = 0;
 		altoY = 1;
@@ -62,9 +67,9 @@ class Player
 				case 'c' : 
 						   movingRight = true; break; //eyeX += dimCubo; orientationX += dimCubo; break;
 				// Movimento in alto
-				case 'o' : eyeY -= dimCubo; orientationY -= dimCubo; break;
+				case 'o' : movingUp = true; break;
 				// Movimento in basso
-				case 'l' : eyeY += dimCubo; orientationY += dimCubo; break;
+				case 'l' : movingDown = true; break;
 				// Guarda avanti
 				case 'u' : orientationY = eyeY; orientationX = eyeX; orientationZ = eyeZ - dimCubo; break;
 				// Guarda indietro
@@ -106,7 +111,21 @@ class Player
 										floor(orientationY / dimCubo), 
 										floor(orientationZ / dimCubo), 0);
 						break;
+					case 0x21: altoY += 0.1; break;
+					case 0x22: altoY -= 0.1; break;
+					case UP: altoZ += 0.1; break;
+					case DOWN: altoZ -= 0.1; break;
+					case RIGHT: altoX += 0.1; break;
+					case LEFT: altoX -= 0.1; break;
 				}
+			}
+			if(collisionChecking) colliding();
+			if(warps.get(roughPosition) != null)
+			{
+				println("Teleporting...");
+				teleport(warps.get(roughPosition).getX(),
+						 warps.get(roughPosition).getY(),
+						 warps.get(roughPosition).getX());
 			}
 		}
 	}
@@ -136,14 +155,15 @@ class Player
 		movingCounter++;
 		if(movingCounter >= 100/movingSpeed)
 		{
-			movingForward = movingBackwards = movingLeft = movingRight = false;
+			movingForward = movingBackwards = movingLeft = movingRight = movingUp = movingDown = false;
+			roughPosition = new Coordinate(floor(eyeX / dimCubo), floor(eyeY / dimCubo), floor(eyeZ / dimCubo));
 			movingCounter = 0;
 		}
 	}
 	
 	public boolean isMoving()
 	{
-		return (movingForward || movingBackwards || movingLeft || movingRight);
+		return (movingForward || movingBackwards || movingLeft || movingRight || movingUp || movingDown);
 	}
 	
 	public boolean isTurning()
@@ -173,9 +193,50 @@ class Player
 			eyeX += movingSpeed * sin(radians(phase + 90));
 			eyeZ -= movingSpeed * cos(radians(phase + 90));
 		}
+		else if(movingUp)
+			eyeY -= movingSpeed;
+		else if(movingDown)
+			eyeY += movingSpeed;
 		
 		orientationX = eyeX + dimCubo * sin(radians(phase));
+		orientationY = eyeY;
 		orientationZ = eyeZ - dimCubo * cos(radians(phase));
+	}
+	
+	private void colliding()
+	{
+		float iX = eyeX;
+		float iZ = eyeZ;
+		if(movingForward)
+		{
+			iX += dimCubo * sin(radians(phase));
+			iZ -= dimCubo * cos(radians(phase));
+		}
+		else if(movingBackwards)
+		{
+			iX -= dimCubo * sin(radians(phase));
+			iZ += dimCubo * cos(radians(phase));
+		}
+		else if(movingLeft)
+		{
+			iX += dimCubo * sin(radians(phase - 90));
+			iZ -= dimCubo * cos(radians(phase - 90));
+		}
+		else if(movingRight)
+		{
+			iX += dimCubo * sin(radians(phase + 90));
+			iZ -= dimCubo * cos(radians(phase + 90));
+		}
+		
+		if(map.inspect(floor(iX / dimCubo), floor(eyeY / dimCubo), floor(iZ / dimCubo)) != 0)
+			movingForward = movingBackwards = movingLeft = movingRight =false;
+	}
+	
+	public String toString()
+	{
+		return "X : " + roughPosition.getX() +
+			   "\nY : " + roughPosition.getY() +
+			   "\nZ : " + roughPosition.getZ();
 	}
 	/*
 	public void moveForward()
@@ -224,6 +285,25 @@ class Player
 		else if(turningRight)
 			phase = (phase + turnSpeed) % (360);
 		orientationX = eyeX + dimCubo * sin(radians(phase));
+		orientationZ = eyeZ - dimCubo * cos(radians(phase));
+	}
+	
+	public void turnCollisionCheckingOn()
+	{
+		collisionChecking = true;
+	}
+	public void turnCollisionCheckingOff()
+	{
+		collisionChecking= false;
+	}
+	
+	public void teleport(int x, int y, int z)
+	{
+		eyeX = x * dimCubo + dimCubo / 2;
+		eyeY = y * dimCubo + dimCubo / 2;
+		eyeZ = z * dimCubo + dimCubo / 2;
+		orientationX = eyeX + dimCubo * sin(radians(phase));
+		orientationY = eyeY;
 		orientationZ = eyeZ - dimCubo * cos(radians(phase));
 	}
 	/*

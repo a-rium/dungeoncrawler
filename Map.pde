@@ -13,14 +13,13 @@ HashMap<Integer, PImage> textures;		// e' globale, di modo che sia visibile a tu
 HashMap<Integer, String> sources;
 HashMap<Integer, String> types;
 
+HashMap<Coordinate, Coordinate> warps;
+
 class Map
 {
 	private int width, height, depth;
 	private ArrayList<Table> map3d;
 	private ArrayList<ArrayList<ArrayList<Solid>>> cubes;
-	
-	
-
 
 	public Map(int width, int height, int depth)
 	{
@@ -66,9 +65,9 @@ class Map
 	
 	public Map(String path)
 	{
-		try{
+		
 			loadMedia(path);
-
+		try{
 			cubes = new ArrayList<ArrayList<ArrayList<Solid>>>(height);
 			for(int h = 0; h<height; h++)
 			{
@@ -119,6 +118,7 @@ class Map
 		box(width * dimCubo, height * dimCubo, depth * dimCubo);
 
 		popMatrix();
+			
 	}
 	
 	public void setCube(int x, int y, int z, int type)
@@ -262,6 +262,8 @@ class Map
 			height = content.getInt(0, 1);
 			depth = content.getInt(0, 2);
 			content.removeRow(0);
+			player = new Player(content.getInt(1, 0), content.getInt(1, 1), content.getInt(1, 2));
+			content.removeRow(0);
 			sources = new HashMap<Integer, String>(content.getRowCount());
 			textures = new HashMap<Integer, PImage>(content.getRowCount());
 			types = new HashMap<Integer, String>(content.getRowCount());
@@ -280,6 +282,11 @@ class Map
 			map3d = new ArrayList<Table>(height);
 			for(int h = height - 1; h>=0; h--)
 				map3d.add(loadTable(path.substring(0, path.indexOf(".")) + "_" + h + ".csv"));
+			content = loadTable(path.substring(0, path.indexOf(".")) + "_warps.csv");
+			warps = new HashMap<Coordinate, Coordinate>(content.getRowCount());
+			for(int i = 0; i < content.getRowCount(); i++)
+				warps.put(new Coordinate(content.getInt(i,0), content.getInt(i,1), content.getInt(i,2)),
+						  new Coordinate(content.getInt(i,3), content.getInt(i,4), content.getInt(i,5)));
 		} 
 		catch(NullPointerException n)
 		{ 
@@ -312,5 +319,17 @@ class Map
 	public void printDimension()
 	{
 		println("Width : " + width + "\nHeight : " + height + "\nDepth : " +depth);
+	}
+	
+	public int inspect(int x, int y, int z)
+	{
+		if(!areAccepted(x, y, z))
+			return 0;
+		return map3d.get(y).getInt(z, x);
+	}
+	
+	public boolean areAccepted(int x, int y, int z)
+	{
+		return !(x < 0 || y < 0 || z < 0 || x >= width || y >= height || z >= depth);
 	}
 }

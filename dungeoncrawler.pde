@@ -50,9 +50,10 @@ void setup()
 	// orientationZ = eyeZ - dimCubo;
 	map = new Map("solid_block.csv");
 	noStroke();
-	player = new Player();
+	//player = new Player();
 	textSize(20);
 	currentTexture = getNextTexture();
+	bash = new Bash(5);
 }
 
 void draw()
@@ -76,6 +77,7 @@ void draw()
 	pushMatrix();
 	hint(DISABLE_DEPTH_TEST);	//passaggio a grafica 2d per l'hud
 	camera();
+	text(player.toString(), 0, 20);
 	// text("Facing: " + (orientationX == eyeX + dimCubo
 					// ? "RIGHT" : (orientationX == eyeX - dimCubo
 					// ? "LEFT" : (orientationZ == eyeZ + dimCubo 
@@ -200,6 +202,10 @@ void keyPressed()
 			default: break;
 		}
 		*/
+		switch(key)
+		{
+			case '\\' : inBash = true; break;
+		}
 		
 		switch(keyCode)
 		{
