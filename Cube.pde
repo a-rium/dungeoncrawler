@@ -6,5 +6,6 @@ class Cube extends Solid
 		super(type, size);
 		solid = createShape(BOX, size);
 		setCorrespondingTexture();
+		solid.noStroke();
 	}
 }

@@ -51,13 +51,15 @@ class Stair extends Solid
 		solid.vertex(0, 0, dimCubo);
 		solid.vertex(0, 0, 0);
 		solid.endShape(CLOSE);
-		//setCorrespondingTexture();
+		
+		solid.setStroke(5);
+		
+		setCorrespondingTexture();
 	}
 	
 	public void draw(int tX, int tY, int tZ)
 	{
-		stroke(5);
+		solid.fill(0, 0, 0);
 		super.draw(tX - dimCubo / 2, tY - dimCubo / 2, tZ - dimCubo / 2);
-		noStroke();
 	}
 }

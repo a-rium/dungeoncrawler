@@ -16,15 +16,18 @@ class Player
 	private boolean collisionChecking = true;
 	// private int movingCounter = 0;
 	
-	private float phase;
+	private int phase;
 	
-	public Player(int x, int y, int z)
+	public Player(int x, int y, int z, int phase)
 	{
+		this.phase = phase;
+		
 		eyeX = x * dimCubo + dimCubo / 2;
 		eyeY = y * dimCubo + dimCubo / 2;
 		eyeZ = z * dimCubo + dimCubo / 2;
 		
 		roughPosition = new Coordinate(floor(eyeX / dimCubo), floor(eyeY / dimCubo), floor(eyeZ / dimCubo));
+		println(roughPosition);
 		
 		orientationX = eyeX + dimCubo * sin(radians(phase));
 		orientationY = eyeY;
@@ -33,8 +36,6 @@ class Player
 		altoX = 0;
 		altoY = 1;
 		altoZ = 0;
-		
-		phase = 0;
 	}
 	
 	public void show()
@@ -42,6 +43,7 @@ class Player
 		camera(eyeX, eyeY, eyeZ,
 			   orientationX, orientationY, orientationZ,
 			   altoX, altoY, altoZ);
+		//pointLight(200, 200, 200, eyeX, eyeY, eyeZ);
 	}
 	
 	public void handle()
@@ -153,7 +155,7 @@ class Player
 	{
 		move();
 		movingCounter++;
-		if(movingCounter >= 100/movingSpeed)
+		if(movingCounter >= dimCubo/movingSpeed)
 		{
 			movingForward = movingBackwards = movingLeft = movingRight = movingUp = movingDown = false;
 			roughPosition = new Coordinate(floor(eyeX / dimCubo), floor(eyeY / dimCubo), floor(eyeZ / dimCubo));
@@ -236,45 +238,11 @@ class Player
 	{
 		return "X : " + roughPosition.getX() +
 			   "\nY : " + roughPosition.getY() +
-			   "\nZ : " + roughPosition.getZ();
+			   "\nZ : " + roughPosition.getZ() +
+			   "Pointing to :\nX : " + floor(orientationX / dimCubo) +
+			   "\nY : " + floor(orientationY / dimCubo) +
+			   "\nZ : " + floor(orientationZ / dimCubo);
 	}
-	/*
-	public void moveForward()
-	{	
-		eyeX += movingSpeed * sin(radians(phase));
-		eyeZ -= movingSpeed * cos(radians(phase));
-		
-		orientationX = eyeX + dimCubo * sin(radians(phase));
-		orientationZ = eyeZ - dimCubo * cos(radians(phase));
-	}
-
-	public void moveBack()
-	{
-		eyeX -= movingSpeed * sin(radians(phase));
-		eyeZ += movingSpeed * cos(radians(phase));
-		
-		orientationX = eyeX + dimCubo * sin(radians(phase));
-		orientationZ = eyeZ - dimCubo * cos(radians(phase));
-	}
-
-	public void moveLeft()
-	{
-		eyeX += movingSpeed * sin(radians(phase - 90));
-		eyeZ -= movingSpeed * cos(radians(phase - 90));
-		
-		orientationX = eyeX + dimCubo * sin(radians(phase));
-		orientationZ = eyeZ - dimCubo * cos(radians(phase));
-	}
-
-	public void moveRight()
-	{
-		eyeX += movingSpeed * sin(radians(phase + 90));
-		eyeZ -= movingSpeed * cos(radians(phase + 90));
-		
-		orientationX = eyeX + dimCubo * sin(radians(phase));
-		orientationZ = eyeZ - dimCubo * cos(radians(phase));
-	}
-	*/
 	
 	// Funzioni di spostamento telecamera a destra e a sinistra
 	
@@ -306,20 +274,7 @@ class Player
 		orientationY = eyeY;
 		orientationZ = eyeZ - dimCubo * cos(radians(phase));
 	}
-	/*
-
-	public void turnLeft()
-	{
-		phase = (phase - turnSpeed) % (360);
-		orientationX = eyeX + dimCubo * sin(radians(phase));
-		orientationZ = eyeZ - dimCubo * cos(radians(phase));
-	}
-
-	public void turnRight()
-	{
-		phase = (phase + turnSpeed) % (360);
-		orientationX = eyeX + dimCubo * sin(radians(phase));
-		orientationZ = eyeZ - dimCubo * cos(radians(phase));
-	}
-	*/
+	
+	public Coordinate getCoordinate(){ return roughPosition; }
+	public int getCurrentPhase(){ return phase; }
 }

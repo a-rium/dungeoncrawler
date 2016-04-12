@@ -65,8 +65,7 @@ class Map
 	
 	public Map(String path)
 	{
-		
-			loadMedia(path);
+		loadMedia(path);
 		try{
 			cubes = new ArrayList<ArrayList<ArrayList<Solid>>>(height);
 			for(int h = 0; h<height; h++)
@@ -90,7 +89,7 @@ class Map
 		}
 		catch(NullPointerException n){ println("Error: accessing to null object."); }
 	}
-	public void drawGridLike()
+	public void drawEverything()		// disegna tutti i cubi
 	{
 		int tY = dimCubo / 2;
 		for(int h = 0; h<height; h++)
@@ -107,7 +106,47 @@ class Map
 		}
 	}
 	
-	public void drawDelimiter()
+	public void drawCageLike(int cageSize)	// disegna solamente i cubi all'interno di un cubo di dimensioni cageSize con al centro il giocatore
+	{
+		Coordinate c = player.getCoordinate();
+		int half = floor((float)cageSize / 2);
+		for(int h = c.getY() - half; h <= c.getY() + half; h++)
+			for(int d = c.getZ() - half; d <= c.getZ() + half; d++)
+				for(int w = c.getX() - half; w <= c.getX() + half; w++)
+					if(areAccepted(w, h, d))
+						cubes.get(h).get(d).get(w).draw(w * dimCubo + dimCubo / 2, h * dimCubo + dimCubo / 2, d * dimCubo + dimCubo / 2);
+	}
+	
+	public void drawCageLike(int width, int height, int depth)	// come sopra, solamente che adesso e' un prisma
+	{
+		Coordinate c = player.getCoordinate();
+		int halfX = floor((float)width / 2);
+		int halfY = floor((float)height / 2);
+		int halfZ = floor((float)depth / 2);
+		for(int h = c.getY() - halfY; h <= c.getY() + halfY; h++)
+			for(int d = c.getZ() - halfZ; d <= c.getZ() + halfZ; d++)
+				for(int w = c.getX() - halfX; w <= c.getX() + halfX; w++)
+					if(areAccepted(w, h, d))
+						cubes.get(h).get(d).get(w).draw(w * dimCubo + dimCubo / 2, h * dimCubo + dimCubo / 2, d * dimCubo + dimCubo / 2);
+	}
+	
+	public void drawSector()	// traccia solamente cio che e' davanti al giocatore(non completamente funzionante, e poco efficiente)
+	{
+		Coordinate c = player.getCoordinate();
+		for(int h = 0; h<height; h++)
+		{
+			if(player.getCurrentPhase() % 180 == 0)
+				for(int d = 0; d<=c.getZ(); d++)
+					for(int w = 0; w<width; w++)
+						cubes.get(h).get(d).get(w).draw(w * dimCubo, h * dimCubo, d * dimCubo);
+			else
+				for(int d = 0; d<depth; d++)
+					for(int w = 0; w<=c.getX(); w++)
+						cubes.get(h).get(d).get(w).draw(w * dimCubo, h * dimCubo, d * dimCubo);
+		}
+	}
+	
+	public void drawDelimiter()	// traccia una linea che delimita la mappa corrente
 	{
 		pushMatrix();
 		noFill();
@@ -202,8 +241,15 @@ class Map
 	{
 		PrintWriter out = createWriter(path);
 		out.println("" + width + "," + height + "," + depth);
+		out.println(startingPlayerPosition.toString());
 		saveMedia(out);		// salvataggio dei materiali utilizzati
 		out.close();
+		
+		out = createWriter(path.substring(0, path.indexOf(".")) + "_warps.csv");
+		for(Coordinate key : warps.keySet())
+			out.println(key.toString() + "," + warps.get(key).toString());
+		out.close();
+		
 		for(int h = 0; h<height; h++)
 		{
 			out = createWriter(path.substring(0, path.indexOf(".")) + "_" + (height - h - 1) + ".csv");
@@ -221,7 +267,7 @@ class Map
 		}
 	}
 	
-	public void printFloor(int f)
+	public void printFloor(int f)		// debug, stampa nella console il piano di altezza f
 	{
 		println("Floor " +  f);
 		for(int d = 0; d<depth; d++)
@@ -262,8 +308,24 @@ class Map
 			height = content.getInt(0, 1);
 			depth = content.getInt(0, 2);
 			content.removeRow(0);
-			player = new Player(content.getInt(1, 0), content.getInt(1, 1), content.getInt(1, 2));
+					// inizializzazione posizione e direzione del personaggio
+			try{
+				int phase = 0; 					// di default il personaggio inizia guardando in avanti	
+				if(content.getString(0, 3).equals("dietro"))
+					phase = 180;
+				else if(content.getString(0, 2).equals("sinistra"))
+					phase = 270;
+				else if(content.getString(0, 2).equals("destra"))
+					phase = 90;
+				player = new Player(content.getInt(0, 0), content.getInt(0, 1), content.getInt(0, 2), phase);
+				println(phase);
+			} catch(ArrayIndexOutOfBoundsException a)
+			{
+				player = new Player(content.getInt(0, 0), content.getInt(0, 1), content.getInt(0, 2), 0);
+			}
+			
 			content.removeRow(0);
+			
 			sources = new HashMap<Integer, String>(content.getRowCount());
 			textures = new HashMap<Integer, PImage>(content.getRowCount());
 			types = new HashMap<Integer, String>(content.getRowCount());
@@ -295,6 +357,7 @@ class Map
 		}
 	}
 	
+	
 	private void saveMedia(PrintWriter out)
 	{
 		for(Integer key : sources.keySet())
@@ -316,7 +379,7 @@ class Map
 		return false;
 	}
 	
-	public void printDimension()
+	public void printDimension()		// debug, stampa nella console le dimensioni della mappa corrente
 	{
 		println("Width : " + width + "\nHeight : " + height + "\nDepth : " +depth);
 	}
@@ -324,7 +387,7 @@ class Map
 	public int inspect(int x, int y, int z)
 	{
 		if(!areAccepted(x, y, z))
-			return 0;
+			return buildMode ? 0 : 1;
 		return map3d.get(y).getInt(z, x);
 	}
 	

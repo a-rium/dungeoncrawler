@@ -88,7 +88,35 @@ class Bash
 				player.turnCollisionCheckingOn();
 			else if(cmd[1].equals("off"))
 				player.turnCollisionCheckingOff();
-			
+		}
+		else if(cmd[0].equals("warp") && cmd.length == 7)
+			warps.put(new Coordinate(Integer.parseInt(cmd[1]),
+									  Integer.parseInt(cmd[2]),
+									  Integer.parseInt(cmd[3])),
+					  new Coordinate(Integer.parseInt(cmd[4]),
+									  Integer.parseInt(cmd[5]),
+									  Integer.parseInt(cmd[6])));
+		else if(cmd[0].equals("dwarp") && cmd.length == 4)
+			warps.remove(new Coordinate(Integer.parseInt(cmd[1]),
+										 Integer.parseInt(cmd[2]),
+										 Integer.parseInt(cmd[3])));
+		else if(cmd[0].equals("player_start_position") && cmd.length == 4)
+			startingPlayerPosition = new Coordinate(Integer.parseInt(cmd[1]),
+													 Integer.parseInt(cmd[2]),
+													 Integer.parseInt(cmd[3]));
+		else if(cmd[0].equals("load_img") && cmd.length == 3)
+		{
+			textures.put(Integer.parseInt(cmd[1]), loadImage(cmd[2]));
+			sources.put(Integer.parseInt(cmd[1]), cmd[2]);
+			if(cmd.length == 3)
+				types.put(Integer.parseInt(cmd[1]), "block");
+			else if(cmd.length == 4)
+			{
+				if(cmd[3].equals("block") || cmd[3].equals("stair"))
+					types.put(Integer.parseInt(cmd[1]), cmd[3]);
+				else
+					types.put(Integer.parseInt(cmd[1]), "block");
+			}
 		}
 	}
 	
